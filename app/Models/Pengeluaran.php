@@ -13,7 +13,7 @@ class Pengeluaran extends Model
 
     protected $fillable = ['user_id','tanggal','jumlah','catatan','id_kategori_pengeluaran'];
 
-    public function kategoriPengeluaran()
+    public function kategori_pengeluaran()
     {
         return $this->belongsTo(KategoriPengeluaran::class, 'id_kategori_pengeluaran', 'id_kategori_pengeluaran');
     }

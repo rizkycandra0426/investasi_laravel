@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_saham')->nullable();
             $table->string('volume', 100)->nullable();
             $table->date('tanggal_transaksi')->nullable();
-            $table->enum('harga_transaksi', ['harga beli', 'harga jual'])->charset('utf8mb4')->collation('utf8mb4_0900_ai_ci')->nullable();
+            $table->enum('harga_transaksi', ['harga beli', 'harga jual'])->nullable();
             $table->unsignedBigInteger('id_sekuritas')->nullable();
             $table->timestamps();
 

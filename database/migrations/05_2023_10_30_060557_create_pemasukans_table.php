@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->nullable();
             $table->date('tanggal')->nullable();
             $table->string('jumlah', 100)->nullable();
-            $table->text('catatan')->charset('utf8mb4')->collation('utf8mb4_0900_ai_ci')->nullable();
+            $table->text('catatan')->nullable();
             $table->unsignedBigInteger('id_kategori_pemasukan')->nullable();
 
             $table->foreign('id_kategori_pemasukan')->references('id_kategori_pemasukan')->on('kategori_pemasukans');

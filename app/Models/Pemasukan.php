@@ -13,9 +13,9 @@ class Pemasukan extends Model
 
     protected $fillable = ['user_id','tanggal','jumlah','catatan','id_kategori_pemasukan'];
 
-    public function kategoriPengeluaran()
+    public function kategori_pemasukan()
     {
-        return $this->belongsTo(KategoriPengeluaran::class, 'id_kategori_pemasukan', 'id_kategori_pemasukan');
+        return $this->belongsTo(KategoriPemasukan::class, 'id_kategori_pemasukan', 'id_kategori_pemasukan');
     }
 
     public function user()
