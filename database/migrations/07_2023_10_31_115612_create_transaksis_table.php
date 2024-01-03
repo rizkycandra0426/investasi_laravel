@@ -17,9 +17,10 @@ return new class extends Migration
             $table->id('id_transaksi');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('id_saham')->nullable();
-            $table->string('volume', 100)->nullable();
+            $table->enum('type',['beli','jual']);
             $table->date('tanggal_transaksi')->nullable();
-            $table->enum('harga_transaksi', ['harga beli', 'harga jual'])->nullable();
+            $table->string('volume', 100)->nullable();
+            $table->string('harga')->nullable();
             $table->unsignedBigInteger('id_sekuritas')->nullable();
             $table->timestamps();
 
