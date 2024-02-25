@@ -31,8 +31,8 @@ class AdminUserSeeder extends Seeder
             'password' => Hash::make('123456'),
         ]);
 
-        $pemasukans = ["Pendapatan Usaha", "Bonus"];
-        $pengeluarans = ["Listrik", "Air"];
+        $pemasukans = ["Uang Saku", " Upah", "Bonus", "Lainnya"];
+        $pengeluarans = ["Makanan", "Minuman", "Tagihan", "Shopping", "Kesehatan & Olahraga", "Lainnya"];
 
         foreach ($pemasukans as $pemasukan) {
             KategoriPemasukan::create([
@@ -46,36 +46,36 @@ class AdminUserSeeder extends Seeder
             ]);
         }
 
-        for ($month = 1; $month <= 12; $month++) {
-            for ($i = 1; $i <= 5; $i++) {
-                $randomDays = rand(1, 28); // Angka acak antara 1 dan 28
-                $date = Carbon::create(now()->year, $month, $randomDays)->addDays(rand(0, 30)); // Tambahkan angka acak antara 0 dan 30 hari
+        // for ($month = 1; $month <= 12; $month++) {
+        //     for ($i = 1; $i <= 5; $i++) {
+        //         $randomDays = rand(1, 28); // Angka acak antara 1 dan 28
+        //         $date = Carbon::create(now()->year, $month, $randomDays)->addDays(rand(0, 30)); // Tambahkan angka acak antara 0 dan 30 hari
         
-                Pemasukan::create([
-                    'user_id' => rand(1, 2),
-                    'tanggal' => $date,
-                    'jumlah' => rand(50000, 200000),
-                    'catatan' => 'Catatan Pemasukan ' . $i,
-                    'id_kategori_pemasukan' => rand(1, 2),
-                    'created_at' => $date, // Tambahkan nilai created_at yang sama dengan tanggal
-                ]);
-            }
-        }
+        //         Pemasukan::create([
+        //             'user_id' => rand(1, 2),
+        //             'tanggal' => $date,
+        //             'jumlah' => rand(50000, 200000),
+        //             'catatan' => 'Catatan Pemasukan ' . $i,
+        //             'id_kategori_pemasukan' => rand(1, 2),
+        //             'created_at' => $date, // Tambahkan nilai created_at yang sama dengan tanggal
+        //         ]);
+        //     }
+        // }
 
-        for ($month = 1; $month <= 12; $month++) {
-            for ($i = 1; $i <= 5; $i++) {
-                $randomDays = rand(1, 28); // Angka acak antara 1 dan 28
-                $date = Carbon::create(now()->year, $month, $randomDays)->addDays(rand(0, 30)); // Tambahkan angka acak antara 0 dan 30 hari
+        // for ($month = 1; $month <= 12; $month++) {
+        //     for ($i = 1; $i <= 5; $i++) {
+        //         $randomDays = rand(1, 28); // Angka acak antara 1 dan 28
+        //         $date = Carbon::create(now()->year, $month, $randomDays)->addDays(rand(0, 30)); // Tambahkan angka acak antara 0 dan 30 hari
         
-                Pengeluaran::create([
-                    'user_id' => rand(1, 2),
-                    'tanggal' => $date,
-                    'jumlah' => rand(50000, 200000),
-                    'catatan' => 'Catatan Pengeluaran ' . $i,
-                    'id_kategori_pengeluaran' => rand(1, 2),
-                    'created_at' => $date, // Tambahkan nilai created_at yang sama dengan tanggal
-                ]);
-            }
-        }
+        //         Pengeluaran::create([
+        //             'user_id' => rand(1, 2),
+        //             'tanggal' => $date,
+        //             'jumlah' => rand(50000, 200000),
+        //             'catatan' => 'Catatan Pengeluaran ' . $i,
+        //             'id_kategori_pengeluaran' => rand(1, 2),
+        //             'created_at' => $date, // Tambahkan nilai created_at yang sama dengan tanggal
+        //         ]);
+        //     }
+        // }
     }
 }
