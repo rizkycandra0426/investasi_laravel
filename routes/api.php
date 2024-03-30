@@ -3,13 +3,17 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\BulananController;
 use App\Http\Controllers\KategoriPemasukanController;
 use App\Http\Controllers\KategoriPengeluaranController;
+use App\Http\Controllers\LumpsumController;
 use App\Http\Controllers\PemasukanController;
 use App\Http\Controllers\PengeluaranController;
+use App\Http\Controllers\PinjamanController;
 use App\Http\Controllers\PortofolioController;
 use App\Http\Controllers\TransactionHistoryController;
 use App\Http\Controllers\TagihanController;
+use App\Http\Controllers\TargetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,3 +45,9 @@ Route::get('/transaction-histories/categories/{month}/{year}', [TransactionHisto
 
 
 Route::post('/portofolio/add', [PortofolioController::class, 'insertData']);
+
+
+Route::post('/lumpsuminvestasi', [LumpsumController::class, 'calculate']);
+Route::post('/bulananinvestasi', [BulananController::class, 'calculateMonthlyInvestment']);
+Route::post('/targetinvestasi', [TargetController::class, 'calculateTargetInvestment']);
+Route::post('/pinjaman', [PinjamanController::class, 'calculateLoanPayments']);
