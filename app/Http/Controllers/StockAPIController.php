@@ -9,28 +9,28 @@ use App\Models\Saham;
 
 class StockAPIController extends Controller
 {
-    public function __construct()
+    public function index()
     {
-        $this->middleware('admin');
+        return Saham::paginate(10);
     }
 
-    public function index()
+    public function indexStock()
     {
         $response = Http::acceptJson()
             ->withHeaders([
                 'X-API-KEY' => config('goapi.apikey')
-            ])->get('https://api.goapi.id/v1/stock/idx/companies')->json();
-
+            ])->withoutVerifying() // Disable SSL verification
+            ->get('https://api.goapi.io/stock/idx/companies')
+            ->json();
 
         $data = $response['data']['results'];
-        //dd($response['data']['results']);
 
-        return view('chart', ['data' => $data]);
+        return response()->json(['message' => 'Pemasukan created', 'data' => $data], 200);
     }
 
     public function getDataAdmin()
     {
-        $data = Saham::paginate(25);
+        $data = SahamModel::paginate(25);
         //dd($data);
 
         return view('admin/emiten', ['data' => $data]);
@@ -41,10 +41,16 @@ class StockAPIController extends Controller
         $response = Http::acceptJson()
             ->withHeaders([
                 'X-API-KEY' => config('goapi.apikey')
-            ])->get('https://api.goapi.id/v1/stock/idx/' . $emiten)->json();
+            ])->withoutVerifying() // Disable SSL verification
+            ->get('https://api.goapi.io/stock/idx/'. $emiten.'/profile')
+            ->json();
 
-        dd($response);
+        return response()->json(['message' => 'Pemasukan created', 'data' => $response], 200);
+
+        // dd($response);
     }
+
+    
 
     public function updateStock()
     {
@@ -56,7 +62,7 @@ class StockAPIController extends Controller
         $data = $response['data']['results'];
 
         foreach ($data as $item) {
-            $insert = Saham::updateOrCreate(
+            $insert = SahamModel::updateOrCreate(
                 [
                     'nama_saham' => $item['ticker']
                 ],
@@ -75,7 +81,7 @@ class StockAPIController extends Controller
     public function delete($emiten)
     {
         $ticker = $emiten;
-        $delete = Saham::where('nama_saham', $emiten)->delete();
+        $delete = SahamModel::where('nama_saham', $emiten)->delete();
 
         return redirect('/admin/emiten')->with('deleted', 'Data emiten berhasil di hapus');
     }

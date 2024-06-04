@@ -10,6 +10,7 @@ use App\Http\Controllers\PengeluaranController;
 use App\Http\Controllers\PortofolioController;
 use App\Http\Controllers\TransactionHistoryController;
 use App\Http\Controllers\TagihanController;
+use App\Http\Controllers\StockAPIController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,5 +40,14 @@ Route::get('/transaction-histories/{month}/{year}', [TransactionHistoryControlle
 Route::get('/transaction-histories/{year}', [TransactionHistoryController::class, 'filterByYear']);
 Route::get('/transaction-histories/categories/{month}/{year}', [TransactionHistoryController::class, 'filterCategoriesByMonthAndYear']);
 
+Route::get('/stock', [StockAPIController::class, 'indexStock']);
+Route::get('/stock/{emiten}', [StockAPIController::class, 'stock']);
+Route::get('/stocks', [StockAPIController::class, 'index']);
+Route::get('/updatestock', [StockAPIController::class, 'updateStock']);
+Route::get('/emiten', [StockAPIController::class, 'getDataAdmin']);
+Route::get('/emiten/update', [StockAPIController::class, 'updateStock']);
+Route::get('/emiten/delete/{emiten}', [StockAPIController::class, 'delete']);
+
 
 Route::post('/portofolio/add', [PortofolioController::class, 'insertData']);
+
