@@ -57,7 +57,7 @@ class StockAPIController extends Controller
         $response = Http::acceptJson()
             ->withHeaders([
                 'X-API-KEY' => config('goapi.apikey')
-            ])->get('https://api.goapi.io/stock/idx/companies')->json();
+            ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/companies')->json();
 
         $data = $response['data']['results'];
 
