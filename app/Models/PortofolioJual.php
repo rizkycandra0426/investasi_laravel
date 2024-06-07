@@ -9,12 +9,12 @@ class PortofolioJual extends Model
 {
     protected $table = "portofolio_juals";
     protected $fillable = [
-        'id_portofolio_jual',
         'id_saham',
         'user_id',
         'volume',
         'tanggal_jual',
         'harga_jual',
+        'fee_jual_persen',
         'id_sekuritas',
     ];
 
@@ -23,5 +23,9 @@ class PortofolioJual extends Model
     public function emiten()
     {
         return $this->hasMany('Saham');
+    }
+    public function sekuritas()
+    {
+        return $this->hasMany('Sekuritas');
     }
 }

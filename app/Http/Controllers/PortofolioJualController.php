@@ -52,20 +52,20 @@ class PortofolioJualController extends Controller
             'user_id' => 'required',
             'id_saham' => 'required',
             'volume' => 'required',
-            'tanggal_beli' => 'required',
-            'harga_beli' => 'required',
-            'fee_beli_persen' => ' required',
-            'id_sekuritas' => 'required',
+            'tanggal_jual' => 'required',
+            'harga_jual' => 'required',
+            'fee_jual_persen' => ' required',
+            'id_sekuritas' => 'nullable',
         ]);
 
         $portofolioJual = PortofolioJual::create($data);
-        return response()->json(['message' => 'PortofolioJual created', 'PortofolioJual' => $portofolioJual], 201);
+        return response()->json(['message' => 'PortofolioJual created', 'portofolioJual' => $portofolioJual], 201);
     }
 
     public function show($id)
     {
         $portofolioJual = PortofolioJual::findOrFail($id);
-        return response()->json(['PortofolioJual' => $portofolioJual], 200);
+        return response()->json(['portofolioJual' => $portofolioJual], 200);
     }
 
     public function update(Request $request, $id)
@@ -75,14 +75,14 @@ class PortofolioJualController extends Controller
             'user_id' => 'required',
             'id_saham' => 'required',
             'volume' => 'required',
-            'tanggal_beli' => 'required',
-            'harga_beli' => 'required',
-            'fee_beli_persen' => ' required',
+            'tanggal_jual' => 'required',
+            'harga_jual' => 'required',
+            'fee_jual_persen' => ' required',
             'id_sekuritas' => 'required',
         ]);
 
         $portofolioJual->update($data);
-        return response()->json(['message' => 'PortofolioJual updated', 'PortofolioJual' => $portofolioJual], 200);
+        return response()->json(['message' => 'PortofolioJual updated', 'portofolioJual' => $portofolioJual], 200);
     }
 
     public function destroy($id)

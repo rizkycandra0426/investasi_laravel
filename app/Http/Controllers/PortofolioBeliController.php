@@ -58,7 +58,7 @@ class PortofolioBeliController extends Controller
             'tanggal_beli' => 'required',
             'harga_beli' => 'required',
             'fee_beli_persen' => ' required',
-            'id_sekuritas' => 'required',
+            'id_sekuritas' => 'nullable',
         ]);
 
         $portofolioBeli = PortofolioBeli::create($data);

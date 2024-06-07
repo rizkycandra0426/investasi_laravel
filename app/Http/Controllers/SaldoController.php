@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Saldo;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Validation\ValidationException;
+use Exception;
 
 class SaldoController extends Controller
 {
@@ -13,54 +16,73 @@ class SaldoController extends Controller
      */
     public function index()
     {
-        //
+        return Saldo::paginate(10);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+    public function indexWeb(Request $request) {
+        try {
+            $portofolioBeli = new PortofolioBeli();
+            $portofolioBeli = PortofolioBeli::where('user_id', $request->auth['user']['user_id'])
+                                ->with('kategori_pemasukan')
+                                ->get();
+            
+            return response()->json([
+                'message' => 'Berhasil mendapatkan daftar toko.',
+                'auth' => $request->auth,
+                'data' => [
+                    'pemasukan' => $portofolioBeli
+                ],
+            ], Response::HTTP_OK);
+
+        } catch (Exception $e) {
+            if($e instanceof ValidationException){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'auth' => $request->auth,
+                    'errors' =>  $e->validator->errors(),
+                ], Response::HTTP_BAD_REQUEST);
+            }else{
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'auth' => $request->auth
+                ], Response::HTTP_BAD_REQUEST);
+            }
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'user_id' => 'required',
+            'saldo' => 'required',
+        ]);
+
+        $saldo = Saldo::create($data);
+        return response()->json(['message' => 'Saldo created', 'saldo' => $saldo], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Saldo $saldo)
+    public function show($id)
     {
-        //
+        $saldo = Saldo::findOrFail($id);
+        return response()->json(['saldo' => $saldo], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Saldo $saldo)
+    public function update(Request $request, $id)
     {
-        //
+        $saldo = Saldo::findOrFail($id);
+        $data = $request->validate([
+            'user_id' => 'required',
+            'saldo' => 'required',
+        ]);
+
+        $saldo->update($data);
+        return response()->json(['message' => 'Saldo updated', 'saldo' => $saldo], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Saldo $saldo)
+    public function destroy($id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Saldo $saldo)
-    {
-        //
+        $saldo = Saldo::findOrFail($id);
+        $saldo->delete();
+        return response()->json(['message' => 'Saldo deleted'], 200);
     }
 }

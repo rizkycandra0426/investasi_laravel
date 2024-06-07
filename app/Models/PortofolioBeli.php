@@ -9,12 +9,12 @@ class PortofolioBeli extends Model
 {
     protected $table = "portofolio_belis";
     protected $fillable = [
-        'id_portofolio_beli',
         'id_saham',
         'user_id',
         'volume',
         'tanggal_beli',
         'harga_beli',
+        'fee_beli_persen',
         'id_sekuritas',
     ];
 
@@ -23,6 +23,10 @@ class PortofolioBeli extends Model
     public function emiten()
     {
         return $this->hasMany('Saham');
+    }
+    public function sekuritas()
+    {
+        return $this->hasMany('Sekuritas');
     }
 
 }

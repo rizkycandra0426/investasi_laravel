@@ -7,11 +7,14 @@ use App\Http\Controllers\KategoriPemasukanController;
 use App\Http\Controllers\KategoriPengeluaranController;
 use App\Http\Controllers\PemasukanController;
 use App\Http\Controllers\PengeluaranController;
-use App\Http\Controllers\PortofolioController;
+use App\Http\Controllers\PortofolioBeliController;
+use App\Http\Controllers\SaldoController;
+use App\Http\Controllers\PortofolioJualController;
 use App\Http\Controllers\CategoryRequestController;
 use App\Http\Controllers\AnggaranController;
 use App\Http\Controllers\TransactionHistoryController;
 use App\Http\Controllers\TagihanController;
+use App\Http\Controllers\SekuritasController;
 use App\Http\Controllers\StockAPIController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AdminUserMiddleware;
@@ -95,6 +98,8 @@ Route::get('/category-requests', [CategoryRequestController::class, 'indexMobile
 
 Route::apiResource('portofoliobeli', PortofolioBeliController::class);
 Route::apiResource('portofoliojual', PortofolioJualController::class);
+Route::apiResource('saldo', SaldoController::class);
+Route::apiResource('sekuritas', SekuritasController::class);
 
 Route::apiResource('pemasukans',PemasukanController::class);
 Route::apiResource('pengeluarans', PengeluaranController::class);
