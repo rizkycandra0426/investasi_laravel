@@ -5,12 +5,46 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Pengeluaran;
 use App\Http\Controllers\Controller;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Validation\ValidationException;
 
 class PengeluaranController extends Controller
 {
     public function index()
     {
         return Pengeluaran::paginate(10);
+    }
+
+    public function indexWeb(Request $request) {
+        try {
+            $pengeluaran = new Pengeluaran();
+            $pengeluaran = $pengeluaran
+                           ->where('user_id', $request->auth['user']['user_id'])
+                           ->with('kategori_pengeluaran')
+                           ->get();
+            
+            return response()->json([
+                'message' => 'Berhasil mendapatkan daftar toko.',
+                'auth' => $request->auth,
+                'data' => [
+                    'pengeluaran' => $pengeluaran
+                ],
+            ], Response::HTTP_OK);
+
+        } catch (Exception $e) {
+            if($e instanceof ValidationException){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'auth' => $request->auth,
+                    'errors' =>  $e->validator->errors(),
+                ], Response::HTTP_BAD_REQUEST);
+            }else{
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'auth' => $request->auth
+                ], Response::HTTP_BAD_REQUEST);
+            }
+        }
     }
 
     public function store(Request $request)

@@ -57,24 +57,24 @@ class StockAPIController extends Controller
         $response = Http::acceptJson()
             ->withHeaders([
                 'X-API-KEY' => config('goapi.apikey')
-            ])->get('https://api.goapi.id/v1/stock/idx/companies')->json();
+            ])->get('https://api.goapi.io/stock/idx/companies')->json();
 
         $data = $response['data']['results'];
 
         foreach ($data as $item) {
-            $insert = SahamModel::updateOrCreate(
+            $insert = Saham::updateOrCreate(
                 [
-                    'nama_saham' => $item['ticker']
+                    'nama_saham' => $item['symbol']
                 ],
                 [
-                    'nama_saham' => $item['ticker'],
+                    'nama_saham' => $item['symbol'],
                     'nama_perusahaan' => $item['name'],
                     'pic' => $item['logo']
                 ]
             );
         }
 
-        return redirect('/admin/emiten')->with('status', 'Data emiten berhasil di update');
+        return redirect('/')->with('status', 'Data emiten berhasil di update');
 
     }
 

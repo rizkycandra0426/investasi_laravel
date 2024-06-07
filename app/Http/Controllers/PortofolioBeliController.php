@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\PortofolioBeli;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Validation\ValidationException;
 
 class PortofolioBeliController extends Controller
 {
@@ -13,54 +15,79 @@ class PortofolioBeliController extends Controller
      */
     public function index()
     {
-        //
+        return PortofolioBeli::paginate(10);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+    public function indexWeb(Request $request) {
+        try {
+            $pemasukan = new Pemasukan();
+            $pemasukan = Pemasukan::where('user_id', $request->auth['user']['user_id'])
+                                ->with('kategori_pemasukan')
+                                ->get();
+            
+            return response()->json([
+                'message' => 'Berhasil mendapatkan daftar toko.',
+                'auth' => $request->auth,
+                'data' => [
+                    'pemasukan' => $pemasukan
+                ],
+            ], Response::HTTP_OK);
+
+        } catch (Exception $e) {
+            if($e instanceof ValidationException){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'auth' => $request->auth,
+                    'errors' =>  $e->validator->errors(),
+                ], Response::HTTP_BAD_REQUEST);
+            }else{
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'auth' => $request->auth
+                ], Response::HTTP_BAD_REQUEST);
+            }
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'user_id' => 'required',
+            'tanggal' => 'required',
+            'jumlah' => 'required',
+            'catatan' => 'nullable',
+            'id_kategori_pemasukan' => 'required',
+        ]);
+
+        $pemasukan = Pemasukan::create($data);
+        return response()->json(['message' => 'Pemasukan created', 'pemasukan' => $pemasukan], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(PortofolioBeli $portofolioBeli)
+    public function show($id)
     {
-        //
+        $pemasukan = Pemasukan::findOrFail($id);
+        return response()->json(['pemasukan' => $pemasukan], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(PortofolioBeli $portofolioBeli)
+    public function update(Request $request, $id)
     {
-        //
+        $pemasukan = Pemasukan::findOrFail($id);
+        $data = $request->validate([
+            'user_id' => 'required',
+            'tanggal' => 'required',
+            'jumlah' => 'required',
+            'catatan' => 'nullable',
+            'id_kategori_pemasukan' => 'required',
+        ]);
+
+        $pemasukan->update($data);
+        return response()->json(['message' => 'Pemasukan updated', 'pemasukan' => $pemasukan], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, PortofolioBeli $portofolioBeli)
+    public function destroy($id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(PortofolioBeli $portofolioBeli)
-    {
-        //
+        $pemasukan = Pemasukan::findOrFail($id);
+        $pemasukan->delete();
+        return response()->json(['message' => 'Pemasukan deleted'], 200);
     }
 }
