@@ -21,8 +21,8 @@ class SaldoController extends Controller
 
     public function indexWeb(Request $request) {
         try {
-            $portofolioBeli = new PortofolioBeli();
-            $portofolioBeli = PortofolioBeli::where('user_id', $request->auth['user']['user_id'])
+            $saldo = new Saldo();
+            $saldo = Saldo::where('user_id', $request->auth['user']['user_id'])
                                 ->with('kategori_pemasukan')
                                 ->get();
             
@@ -30,7 +30,7 @@ class SaldoController extends Controller
                 'message' => 'Berhasil mendapatkan daftar toko.',
                 'auth' => $request->auth,
                 'data' => [
-                    'pemasukan' => $portofolioBeli
+                    'pemasukan' => $saldo
                 ],
             ], Response::HTTP_OK);
 

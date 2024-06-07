@@ -21,8 +21,8 @@ class SekuritasController extends Controller
 
     public function indexWeb(Request $request) {
         try {
-            $portofolioBeli = new PortofolioBeli();
-            $portofolioBeli = PortofolioBeli::where('user_id', $request->auth['user']['user_id'])
+            $sekuritas = new Sekuritas();
+            $sekuritas = Sekuritas::where('user_id', $request->auth['user']['user_id'])
                                 ->with('kategori_pemasukan')
                                 ->get();
             
@@ -30,7 +30,7 @@ class SekuritasController extends Controller
                 'message' => 'Berhasil mendapatkan daftar toko.',
                 'auth' => $request->auth,
                 'data' => [
-                    'pemasukan' => $portofolioBeli
+                    'pemasukan' => $sekuritas
                 ],
             ], Response::HTTP_OK);
 
