@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 
 class AnggaranController extends Controller
@@ -67,7 +69,7 @@ class AnggaranController extends Controller
                     'errors' => $e->validator->errors(),
                 ], Response::HTTP_BAD_REQUEST);
             } else {
-                \Log::error('Error in index method: ' . $e->getMessage());
+                Log::error('Error in index method: ' . $e->getMessage());
                 return response()->json([
                     'message' => $e->getMessage(),
                     'auth' => $request->auth

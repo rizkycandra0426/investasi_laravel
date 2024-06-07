@@ -7,6 +7,7 @@ use App\Models\KategoriPemasukan;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
+use Exception;
 
 class KategoriPemasukanController extends Controller
 {

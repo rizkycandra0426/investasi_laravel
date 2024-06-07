@@ -30,7 +30,7 @@ class StockAPIController extends Controller
 
     public function getDataAdmin()
     {
-        $data = SahamModel::paginate(25);
+        $data = Saham::paginate(25);
         //dd($data);
 
         return view('admin/emiten', ['data' => $data]);
@@ -81,7 +81,7 @@ class StockAPIController extends Controller
     public function delete($emiten)
     {
         $ticker = $emiten;
-        $delete = SahamModel::where('nama_saham', $emiten)->delete();
+        $delete = Saham::where('nama_saham', $emiten)->delete();
 
         return redirect('/admin/emiten')->with('deleted', 'Data emiten berhasil di hapus');
     }

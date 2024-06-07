@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\AuthenticationException;
-
+use Exception;
 class AuthenticationController extends Controller
 {
     public function registerAdmin(Request $request) {

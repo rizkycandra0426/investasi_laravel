@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Pengeluaran;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
+use Exception;
 
 class PemasukanController extends Controller
 {
