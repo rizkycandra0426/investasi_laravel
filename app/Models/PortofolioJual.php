@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProtofolioJual extends Model
+class PortofolioJual extends Model
 {
     protected $table = "portofolio_juals";
     protected $fillable = [

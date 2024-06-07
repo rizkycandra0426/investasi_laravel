@@ -34,7 +34,7 @@ Route::middleware([VerifyApiKey::class])->group(function () {
     Route::get('/auth', [AuthenticationController::class, 'auth']);
 
     Route::middleware([GuestMiddleware::class])->group(function () {
-        Route::post('/login', [AuthenticationController::class, 'loginUser']);
+        Route::post('/login-user', [AuthenticationController::class, 'loginUser']);
         Route::post('/register', [AuthenticationController::class, 'registerUser']);
 
         Route::post('/login-admin', [AuthenticationController::class, 'loginAdmin']);

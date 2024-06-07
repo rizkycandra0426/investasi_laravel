@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PortofolioBeli;
+use App\Models\PortofolioJual;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
 
-class PortofolioBeliController extends Controller
+class PortofolioJualController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         return PortofolioBeli::paginate(10);
