@@ -102,9 +102,9 @@ Route::apiResource('tagihans', TagihanController::class);
 Route::resource('kategori_pemasukans', KategoriPemasukanController::class);
 Route::resource('kategori_pengeluarans', KategoriPengeluaranController::class);
 
-// Route::post('login', [AuthenticationController::class, 'login']);
-// Route::post('register', [AuthenticationController::class, 'register']);
-// Route::post('logout', [AuthenticationController::class, 'logout']);
+Route::post('login', [AuthenticationController::class, 'login']);
+Route::post('register', [AuthenticationController::class, 'register']);
+Route::post('logout', [AuthenticationController::class, 'logout']);
 
 Route::get('/transaction-histories/{month}/{year}', [TransactionHistoryController::class, 'filterByMonthAndYear']);
 Route::get('/transaction-histories/{year}', [TransactionHistoryController::class, 'filterByYear']);
