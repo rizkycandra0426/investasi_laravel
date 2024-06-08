@@ -42,10 +42,10 @@ class StockAPIController extends Controller
             ->withHeaders([
                 'X-API-KEY' => config('goapi.apikey')
             ])->withoutVerifying() // Disable SSL verification
-            ->get('https://api.goapi.io/stock/idx/'. $emiten.'/profile')
+            ->get('https://api.goapi.io/stock/idx/prices?symbols='. $emiten)
             ->json();
 
-        return response()->json(['message' => 'Pemasukan created', 'data' => $response], 200);
+        return response()->json(['response' => $response], 200);
 
         // dd($response);
     }

@@ -87,14 +87,15 @@ Route::middleware([VerifyApiKey::class])->group(function () {
     });
 });
 
-Route::get('/stock', [StockAPIController::class, 'index']);
+Route::get('/stock/{$emiten}', [StockAPIController::class, 'stock']); // Harga
+Route::get('/stock', [StockAPIController::class, 'index']); // List Saham
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/category-requests', [CategoryRequestController::class, 'store']);
-Route::get('/category-requests', [CategoryRequestController::class, 'indexMobile']);
+Route::post('/category-requests', [CategoryRequestController::class, 'store']); // Simpan Category
+Route::get('/category-requests', [CategoryRequestController::class, 'indexMobile']); // List request categorie
 
 Route::apiResource('portofoliobeli', PortofolioBeliController::class);
 Route::apiResource('portofoliojual', PortofolioJualController::class);
