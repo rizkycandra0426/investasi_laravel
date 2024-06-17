@@ -30,3 +30,4 @@ class PortofolioJual extends Model
         return $this->hasMany('Sekuritas');
     }
 }
+php artisan migrate:refresh --path=/database/migrations/11_2024_06_04_072742_create_portofolio_juals_table.php
