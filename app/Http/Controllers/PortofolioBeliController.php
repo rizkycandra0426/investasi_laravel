@@ -54,10 +54,11 @@ class PortofolioBeliController extends Controller
         $data = $request->validate([
             'user_id' => 'required',
             'id_saham' => 'required',
-            'volume' => 'required',
+            'volume_beli' => 'required',
             'tanggal_beli' => 'required',
             'harga_beli' => 'required',
-            'fee_beli_persen' => ' required',
+            'harga_total' => 'required',
+            'pembelian' => ' required',
             'id_sekuritas' => 'nullable',
         ]);
 
@@ -77,11 +78,12 @@ class PortofolioBeliController extends Controller
         $data = $request->validate([
             'user_id' => 'required',
             'id_saham' => 'required',
-            'volume' => 'required',
+            'volume_beli' => 'required',
             'tanggal_beli' => 'required',
             'harga_beli' => 'required',
-            'fee_beli_persen' => ' required',
-            'id_sekuritas' => 'required',
+            'harga_total' => 'required',
+            'pembelian' => ' required',
+            'id_sekuritas' => 'nullable',
         ]);
 
         $portofolioBeli->update($data);

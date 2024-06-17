@@ -16,8 +16,7 @@ return new class extends Migration
         Schema::create('sekuritass', function (Blueprint $table) {
             $table->id('id_sekuritas');
             $table->string('nama_sekuritas', 100)->nullable();
-            $table->float('fee_beli')->nullable();
-            $table->float('fee_jual')->nullable();
+            $table->float('fee')->nullable();
             $table->timestamps();
         });
     }

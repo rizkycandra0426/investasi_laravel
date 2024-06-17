@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Models\Saham;
-
+use Carbon\Carbon;
 class StockAPIController extends Controller
 {
     public function index()
@@ -77,6 +77,60 @@ class StockAPIController extends Controller
         return redirect('/')->with('status', 'Data emiten berhasil di update');
 
     }
+
+    public function historical_30hari($symbol)
+    {
+        $end = Carbon::now()->format('Y-m-d');
+        
+        $start = Carbon::now()->subDays(30)->format('Y-m-d');
+        $response = Http::acceptJson()
+            ->withHeaders([
+                'X-API-KEY' => config('goapi.apikey')
+            ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/'.$symbol.'/historical?from='.$start.'&to='.$end)->json();
+
+        return response()->json(['response' => $response], 200);
+    }
+
+    public function historical_60hari($symbol)
+    {
+        $end = Carbon::now()->format('Y-m-d');
+        
+        $start = Carbon::now()->subDays(60)->format('Y-m-d');
+        $response = Http::acceptJson()
+            ->withHeaders([
+                'X-API-KEY' => config('goapi.apikey')
+            ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/'.$symbol.'/historical?from='.$start.'&to='.$end)->json();
+
+        return response()->json(['response' => $response], 200);
+    }
+
+    public function historical_90hari($symbol)
+    {
+        $end = Carbon::now()->format('Y-m-d');
+        
+        $start = Carbon::now()->subDays(90)->format('Y-m-d');
+        $response = Http::acceptJson()
+            ->withHeaders([
+                'X-API-KEY' => config('goapi.apikey')
+            ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/'.$symbol.'/historical?from='.$start.'&to='.$end)->json();
+
+        return response()->json(['response' => $response], 200);
+    }
+
+    public function historical_1tahun($symbol)
+    {
+        $end = Carbon::now()->format('Y-m-d');
+        
+        $start = Carbon::now()->subDays(360)->format('Y-m-d');
+        $response = Http::acceptJson()
+            ->withHeaders([
+                'X-API-KEY' => config('goapi.apikey')
+            ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/'.$symbol.'/historical?from='.$start.'&to='.$end)->json();
+
+        return response()->json(['response' => $response], 200);
+    }
+
+    // 30, 60, 90, 1 tahun
 
     public function delete($emiten)
     {

@@ -11,10 +11,11 @@ class PortofolioJual extends Model
     protected $fillable = [
         'id_saham',
         'user_id',
-        'volume',
+        'volume_jual',
         'tanggal_jual',
         'harga_jual',
-        'fee_jual_persen',
+        'harga_total',
+        'penjualan',
         'id_sekuritas',
     ];
 

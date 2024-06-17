@@ -11,10 +11,11 @@ class PortofolioBeli extends Model
     protected $fillable = [
         'id_saham',
         'user_id',
-        'volume',
+        'volume_beli',
         'tanggal_beli',
         'harga_beli',
-        'fee_beli_persen',
+        'harga_total',
+        'pembelian',
         'id_sekuritas',
     ];
 

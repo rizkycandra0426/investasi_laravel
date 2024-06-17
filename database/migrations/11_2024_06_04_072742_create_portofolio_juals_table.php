@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id('id_portofolio_jual');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('id_saham')->nullable();
-            $table->string('volume', 100)->nullable();
+            $table->string('volume_jual', 100)->nullable();
             $table->date('tanggal_jual')->nullable();
             $table->bigInteger('harga_jual')->nullable();
-            $table->integer('fee_jual_persen')->nullable();
+            $table->bigInteger('harga_total')->nullable();
+            $table->bigInteger('penjualan')->nullable();
             $table->unsignedBigInteger('id_sekuritas')->nullable();
 
             $table->foreign('id_saham')->references('id_saham')->on('sahams');

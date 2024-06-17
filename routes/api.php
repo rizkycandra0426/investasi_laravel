@@ -68,7 +68,7 @@ Route::middleware([VerifyApiKey::class])->group(function () {
 
         Route::get('/category-requests', [CategoryRequestController::class, 'index']);
 
-        Route::post('/portofolio/add', [PortofolioController::class, 'insertData']);
+        // Route::post('/portofolio/add', [PortofolioController::class, 'insertData']);
 
         Route::get('/transaction-histories/{month}/{year}', [TransactionHistoryController::class, 'filterByMonthAndYear']);
         Route::get('/transaction-histories/{year}', [TransactionHistoryController::class, 'filterByYear']);
@@ -117,13 +117,24 @@ Route::get('/transaction-histories/{year}', [TransactionHistoryController::class
 Route::get('/transaction-histories/categories/{month}/{year}', [TransactionHistoryController::class, 'filterCategoriesByMonthAndYear']);
 
 Route::get('/stock', [StockAPIController::class, 'indexStock']);
+
+// Route buat cek harga saham. {emiten} -> symbol saham
 Route::get('/stock/{emiten}', [StockAPIController::class, 'stock']);
+
+// Route buat manggil seluruh saham 
 Route::get('/stocks', [StockAPIController::class, 'index']);
+
+// Route buat manggil histori saham
+Route::get('/histori_30hari/{symbol}', [StockAPIController::class, 'historical_30hari']);
+Route::get('/histori_60hari/{symbol}', [StockAPIController::class, 'historical_60hari']);
+Route::get('/histori_90hari/{symbol}', [StockAPIController::class, 'historical_90hari']);
+Route::get('/histori_1tahun/{symbol}', [StockAPIController::class, 'historical_1tahun']);
+
 Route::get('/updatestock', [StockAPIController::class, 'updateStock']);
 Route::get('/emiten', [StockAPIController::class, 'getDataAdmin']);
 Route::get('/emiten/update', [StockAPIController::class, 'updateStock']);
 Route::get('/emiten/delete/{emiten}', [StockAPIController::class, 'delete']);
 
 
-Route::post('/portofolio/add', [PortofolioController::class, 'insertData']);
+// Route::post('/portofolio/add', [PortofolioController::class, 'insertData']);
 

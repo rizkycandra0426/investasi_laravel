@@ -51,10 +51,11 @@ class PortofolioJualController extends Controller
         $data = $request->validate([
             'user_id' => 'required',
             'id_saham' => 'required',
-            'volume' => 'required',
+            'volume_jual' => 'required',
             'tanggal_jual' => 'required',
             'harga_jual' => 'required',
-            'fee_jual_persen' => ' required',
+            'harga_total' => ' required',
+            'penjualan' => ' required',
             'id_sekuritas' => 'nullable',
         ]);
 
@@ -74,11 +75,12 @@ class PortofolioJualController extends Controller
         $data = $request->validate([
             'user_id' => 'required',
             'id_saham' => 'required',
-            'volume' => 'required',
+            'volume_jual' => 'required',
             'tanggal_jual' => 'required',
             'harga_jual' => 'required',
-            'fee_jual_persen' => ' required',
-            'id_sekuritas' => 'required',
+            'harga_total' => ' required',
+            'penjualan' => ' required',
+            'id_sekuritas' => 'nullable',
         ]);
 
         $portofolioJual->update($data);
