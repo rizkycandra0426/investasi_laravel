@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 use Exception;
+use Laravel\Sanctum\PersonalAccessToken;
 class CategoryRequestController extends Controller
 {
     /**
