@@ -23,11 +23,18 @@ class PortofolioJual extends Model
     protected $primaryKey = 'id_portofolio_jual';
     public function emiten()
     {
-        return $this->hasMany('Saham');
+        return $this->hasMany(Saham::class, 'id_saham', 'id_saham');
     }
     public function sekuritas()
     {
         return $this->hasMany('Sekuritas');
     }
+    public function saham()
+    {
+        return $this->belongsTo(Saham::class, 'user_id', 'id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }
-php artisan migrate:refresh --path=/database/migrations/11_2024_06_04_072742_create_portofolio_juals_table.php

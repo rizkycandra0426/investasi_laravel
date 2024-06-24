@@ -23,11 +23,20 @@ class PortofolioBeli extends Model
     protected $primaryKey = 'id_portofolio_beli';
     public function emiten()
     {
-        return $this->hasMany('Saham');
+        return $this->hasMany(Saham::class, 'id_saham', 'id_saham');
+    }
+    public function saham()
+    {
+        return $this->belongsTo(Saham::class, 'user_id', 'id');
     }
     public function sekuritas()
     {
         return $this->hasMany('Sekuritas');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+    
 
 }

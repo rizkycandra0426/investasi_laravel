@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PortofolioBeli;
+use App\Models\Saham;
+use App\Models\Sekuritas;
 use App\Models\PortofolioJual;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
 use Exception;
+use Illuminate\Support\Facades\Http;
+
 class PortofolioJualController extends Controller
 {
     public function index()
@@ -48,18 +53,138 @@ class PortofolioJualController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        
+        $portobeli = PortofolioBeli::where('user_id', $request->auth['user']['user_id'])->with('emiten')->get()->toArray();
+        $portojual = PortofolioJual::where('user_id', $request->auth['user']['user_id'])->with('emiten')->get()->toArray();
+        // dd($portojual);
+    
+        // Check if portfolios are not null
+        if (is_null($portobeli) || is_null($portojual)) {
+            return response()->json(['error' => 'Portfolio data is missing.'], 400);
+        }
+
+    // Initialize variables
+    $groupedByEmiten = [];
+    $result = [];
+
+    // Process buy portfolios
+    if(!empty($portobeli)) {
+        foreach ($portobeli as $item) {
+            $emitenId = $item['emiten'][0]['id_saham'];
+            if (!isset($groupedByEmiten[$emitenId])) {
+                $groupedByEmiten[$emitenId] = [
+                    'nama_saham' => $item['emiten'][0]['nama_saham'],
+                    'vol_beli' => 0,
+                    'vol_jual' => 0,
+                    'equity' => 0, // Initialize equity
+                    'tanggal' => $item['tanggal_beli'], // Use the buy date initially
+                ];
+            }
+            $groupedByEmiten[$emitenId]['vol_beli'] += (int)$item['volume_beli'];
+            $groupedByEmiten[$emitenId]['equity'] += isset($item['harga_total']) ? (float)$item['harga_total'] : 0; // Add to equity
+        }
+    }
+
+    // Process sell portfolios
+    if(!empty($portojual)) {
+        foreach ($portojual as $item) {
+            $emitenId = $item['emiten'][0]['id_saham'];
+            if (!isset($groupedByEmiten[$emitenId])) {
+                $groupedByEmiten[$emitenId] = [
+                    'nama_saham' => $item['emiten'][0]['nama_saham'],
+                    'vol_beli' => 0,
+                    'vol_jual' => 0,
+                    'equity' => 0, // Initialize equity
+                    'tanggal' => $item['tanggal_jual'], // Use the sell date initially
+                ];
+            }
+            $groupedByEmiten[$emitenId]['vol_jual'] += (int)$item['volume_jual'];
+            $groupedByEmiten[$emitenId]['equity'] -= isset($item['harga_total']) ? (float)$item['harga_total'] : 0; // Subtract from equity
+
+            // Ensure vol_beli doesn't go negative
+            if ($groupedByEmiten[$emitenId]['vol_beli'] < 0) {
+                $groupedByEmiten[$emitenId]['vol_beli'] = 0;
+            }
+
+            // Ensure equity doesn't go negative
+            if ($groupedByEmiten[$emitenId]['equity'] < 0) {
+                $groupedByEmiten[$emitenId]['equity'] = 0;
+            }
+        }
+    }
+
+    // Calculate vol_total and averages
+    foreach ($groupedByEmiten as $data) {
+        $vol_total = max($data['vol_beli'] - $data['vol_jual'], 0); // Ensure vol_total is not negative
+        $avg_beli = $data['vol_beli'] > 0 ? floor($data['vol_beli'] / count($portobeli)) : 0;
+        $avg_jual = $data['vol_jual'] > 0 ? floor($data['vol_jual'] / count($portojual)) : 0;
+
+        $result[] = [
+            'emiten' => $data['nama_saham'],
+            'vol_beli' => $data['vol_beli'],
+            'vol_jual' => $data['vol_jual'],
+            'vol_total' => $vol_total,
+            'avg_beli' => $avg_beli,
+            'avg_jual' => $avg_jual,
+            'tanggal' => $data['tanggal'],
+            'equity' => $data['equity'], // Add equity to the result
+        ];
+    }
+        
+        // dd($result['vol_total']);
+        
+
+        $jualporto = $request->validate([
             'user_id' => 'required',
             'id_saham' => 'required',
-            'volume_jual' => 'required',
             'tanggal_jual' => 'required',
-            'harga_jual' => 'required',
-            'harga_total' => ' required',
-            'penjualan' => ' required',
+            'volume_jual' => ' required',
             'id_sekuritas' => 'nullable',
         ]);
 
-        $portofolioJual = PortofolioJual::create($data);
+        $sekuritas = Sekuritas::where('id_sekuritas', '=', $jualporto['id_sekuritas'])->first()->toArray();
+        $saham = Saham::where('id_saham', '=', $jualporto['id_saham'])->first()->toArray();
+        $voltotal = null;
+        $penjualan = null;
+
+        foreach ($result as $item) {
+            if ($item['emiten'] === $saham['nama_saham']) {
+                $voltotal = $item['vol_total'];
+                $equity = $item['equity'];
+                break;
+            }
+        }
+        // dd($vol_total);
+        // dd($saham['nama_saham']);
+        $response = Http::acceptJson()
+            ->withHeaders([
+                'X-API-KEY' => config('goapi.apikey')
+            ])->withoutVerifying() // Disable SSL verification
+            ->get('https://api.goapi.io/stock/idx/prices?symbols='. $saham['nama_saham'])
+            ->json();
+        $hargasaham = $response['data']['results'][0]['close'];
+        // dd($hargasaham);
+
+        // dd($jualporto['volume_jual'] <= $voltotal);
+        if($jualporto['volume_jual'] <= $voltotal) {
+            $penjualan = $jualporto['volume_jual'] * $hargasaham;
+            if($penjualan <= $equity) {
+
+                $fee = ceil($penjualan *  $sekuritas['fee'] / 100);
+                $jualporto['penjualan'] = $penjualan - $fee;
+                $jualporto['harga_total'] = $penjualan;
+                $jualporto['harga_jual'] = $hargasaham;
+            }
+            else {
+                return response()->json(['error' => 'saldo tidak cukup.'], 400);
+                
+            }
+        } else {
+            return response()->json(['error' => 'vol tidak cukup.'], 400);
+        }
+
+
+        $portofolioJual = PortofolioJual::create($jualporto);
         return response()->json(['message' => 'PortofolioJual created', 'portofolioJual' => $portofolioJual], 201);
     }
 
