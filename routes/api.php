@@ -17,6 +17,7 @@ use App\Http\Controllers\TagihanController;
 use App\Http\Controllers\SekuritasController;
 use App\Http\Controllers\StockAPIController;
 use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\KursController;
 use App\Http\Controllers\PostBeliController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AdminUserMiddleware;
@@ -93,7 +94,7 @@ use App\Http\Middleware\GuestMiddleware;
 // });
 
 Route::get('/berita', [BeritaController::class, 'index']);
-Route::get('/berita-update', [BeritaController::class, 'update']);
+Route::get('/kurs', [KursController::class, 'index']);
 
 Route::get('/stock/{$emiten}', [StockAPIController::class, 'stock']); // Harga
 Route::get('/stock', [StockAPIController::class, 'index']); // List Saham
