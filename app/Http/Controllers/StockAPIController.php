@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Models\Saham;
+use App\Models\Dividen;
 use Carbon\Carbon;
 class StockAPIController extends Controller
 {
@@ -77,6 +78,26 @@ class StockAPIController extends Controller
         return redirect('/')->with('status', 'Data emiten berhasil di update');
 
     }
+
+    public function dividen(Request $request)
+{
+    
+
+    // Convert the dividen value to an integer
+    $dividenValue = (int) $request->input('dividen');
+
+    $dividen = Dividen::create([
+        'emiten' => $request->input('emiten'),
+        'dividen' => $dividenValue,
+    ]);
+
+    // dd($dividen);
+
+    return redirect('/')->with('status', 'Data emiten berhasil di update');
+}
+
+
+
 
     public function historical_30hari($symbol)
     {

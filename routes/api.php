@@ -131,8 +131,6 @@ Route::get('/transaction-histories/{month}/{year}', [TransactionHistoryControlle
 Route::get('/transaction-histories/{year}', [TransactionHistoryController::class, 'filterByYear']);
 Route::get('/transaction-histories/categories/{month}/{year}', [TransactionHistoryController::class, 'filterCategoriesByMonthAndYear']);
 
-
-
 // Route buat manggil histori saham
 Route::get('/histori_30hari/{symbol}', [StockAPIController::class, 'historical_30hari']);
 Route::get('/histori_60hari/{symbol}', [StockAPIController::class, 'historical_60hari']);

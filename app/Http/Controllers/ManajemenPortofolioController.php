@@ -119,7 +119,8 @@ class ManajemenPortofolioController extends Controller
 
 
     public function mutasidana() {
-
+        // modal valuasi awal
+        $valuasi_awal = Saldo::get();
     }
 
 

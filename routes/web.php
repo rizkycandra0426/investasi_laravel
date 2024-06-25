@@ -20,6 +20,8 @@ Route::get('/', function () {
 });
 
 Route::get('/updatestock', [StockAPIController::class, 'updateStock']);
+Route::get('/update', [StockAPIController::class, 'updateStock']);
+Route::post('/dividen', [StockAPIController::class, 'dividen'])->name('dividen');
 
 // Route::get('/', [StockAPIController::class, 'index']);
 
