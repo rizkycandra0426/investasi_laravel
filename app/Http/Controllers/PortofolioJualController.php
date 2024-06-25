@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PortofolioBeli;
 use App\Models\Saham;
 use App\Models\Sekuritas;
+use App\Models\Saldo;
 use App\Models\PortofolioJual;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -53,6 +54,7 @@ class PortofolioJualController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->auth['user']['user_id']);
         
         $portobeli = PortofolioBeli::where('user_id', $request->auth['user']['user_id'])->with('emiten')->get()->toArray();
         $portojual = PortofolioJual::where('user_id', $request->auth['user']['user_id'])->with('emiten')->get()->toArray();
@@ -76,6 +78,7 @@ class PortofolioJualController extends Controller
                     'nama_saham' => $item['emiten'][0]['nama_saham'],
                     'vol_beli' => 0,
                     'vol_jual' => 0,
+                    'return' => 0,
                     'equity' => 0, // Initialize equity
                     'tanggal' => $item['tanggal_beli'], // Use the buy date initially
                 ];
@@ -94,6 +97,7 @@ class PortofolioJualController extends Controller
                     'nama_saham' => $item['emiten'][0]['nama_saham'],
                     'vol_beli' => 0,
                     'vol_jual' => 0,
+                    'return' => 0,
                     'equity' => 0, // Initialize equity
                     'tanggal' => $item['tanggal_jual'], // Use the sell date initially
                 ];
@@ -118,6 +122,16 @@ class PortofolioJualController extends Controller
         $vol_total = max($data['vol_beli'] - $data['vol_jual'], 0); // Ensure vol_total is not negative
         $avg_beli = $data['vol_beli'] > 0 ? floor($data['vol_beli'] / count($portobeli)) : 0;
         $avg_jual = $data['vol_jual'] > 0 ? floor($data['vol_jual'] / count($portojual)) : 0;
+        
+        $response = Http::acceptJson()
+            ->withHeaders([
+                'X-API-KEY' => config('goapi.apikey')
+            ])->withoutVerifying() // Disable SSL verification
+            ->get('https://api.goapi.io/stock/idx/prices?symbols='. $data['nama_saham'])
+            ->json();
+        $hargasaham = $response['data']['results'][0]['close'];
+        $hargaclose = $vol_total * $hargasaham;
+        $data['return'] = $hargaclose - $data['equity'];
 
         $result[] = [
             'emiten' => $data['nama_saham'],
@@ -127,11 +141,12 @@ class PortofolioJualController extends Controller
             'avg_beli' => $avg_beli,
             'avg_jual' => $avg_jual,
             'tanggal' => $data['tanggal'],
+            'return' => $data['return'],
             'equity' => $data['equity'], // Add equity to the result
         ];
     }
         
-        // dd($result['vol_total']);
+        // dd($result[0]['return']);
         
 
         $jualporto = $request->validate([
@@ -144,25 +159,23 @@ class PortofolioJualController extends Controller
 
         $sekuritas = Sekuritas::where('id_sekuritas', '=', $jualporto['id_sekuritas'])->first()->toArray();
         $saham = Saham::where('id_saham', '=', $jualporto['id_saham'])->first()->toArray();
+        
         $voltotal = null;
         $penjualan = null;
 
         foreach ($result as $item) {
             if ($item['emiten'] === $saham['nama_saham']) {
                 $voltotal = $item['vol_total'];
-                $equity = $item['equity'];
+                $equity = $item['equity'] + $item['return'];
+                // dd($equity);
                 break;
+            } else {
+                return response()->json(['error' => 'tidak ada data saham tersebut.'], 400);
             }
         }
         // dd($vol_total);
         // dd($saham['nama_saham']);
-        $response = Http::acceptJson()
-            ->withHeaders([
-                'X-API-KEY' => config('goapi.apikey')
-            ])->withoutVerifying() // Disable SSL verification
-            ->get('https://api.goapi.io/stock/idx/prices?symbols='. $saham['nama_saham'])
-            ->json();
-        $hargasaham = $response['data']['results'][0]['close'];
+        
         // dd($hargasaham);
 
         // dd($jualporto['volume_jual'] <= $voltotal);
@@ -182,6 +195,23 @@ class PortofolioJualController extends Controller
         } else {
             return response()->json(['error' => 'vol tidak cukup.'], 400);
         }
+
+        $saldo = Saldo::where('user_id', $request->auth['user']['user_id'])->first();
+
+        if (!$saldo) {
+            return response()->json(['error' => 'Saldo not found for the user.'], 404);
+        }
+    
+        // Check if saldo is sufficient
+       
+            // Deduct pembelian from saldo
+        $saldo->saldo += $jualporto['penjualan'];
+    
+            // Save the updated saldo
+        $saldo->save();
+    
+        
+          
 
 
         $portofolioJual = PortofolioJual::create($jualporto);

@@ -9,8 +9,8 @@ class PostBeli extends Model
 {
     use HasFactory;
 
-    public function saham()
-    {
-        return $this->belongsTo(Saham::class, 'user_id', 'id');
-    }
+    // public function saham()
+    // {
+    //     return $this->belongsTo(Saham::class, 'user_id', 'id');
+    // }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Sekuritas;
 use App\Models\Saham;
+use App\Models\Saldo;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Http;
@@ -81,6 +82,24 @@ class PortofolioBeliController extends Controller
         $data['harga_total'] = $pembelian;
         $data['pembelian'] = $pembelian + $potongan;
         $data['harga_beli'] = $hargasaham;
+        
+        $saldo = Saldo::where('user_id', $request->auth['user']['user_id'])->first();
+
+        if (!$saldo) {
+            return response()->json(['error' => 'Saldo not found for the user.'], 404);
+        }
+    
+        // Check if saldo is sufficient
+        if ($saldo->saldo >= $data['pembelian']) {
+            // Deduct pembelian from saldo
+            $saldo->saldo -= $data['pembelian'];
+    
+            // Save the updated saldo
+            $saldo->save();
+    
+        } else {
+            return response()->json(['error' => 'Insufficient saldo.'], 400);
+        }
 
         $portofolioBeli = PortofolioBeli::create($data);
         return response()->json(['message' => 'PortofolioBeli created', 'portofolioBeli' => $portofolioBeli], 201);

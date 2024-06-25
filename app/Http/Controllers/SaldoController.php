@@ -61,6 +61,18 @@ class SaldoController extends Controller
         return response()->json(['message' => 'Saldo created', 'saldo' => $saldo], 201);
     }
 
+    public function saldoUser(Request $request)
+    {
+        $data = $request->validate([
+            'user_id' => 'required',
+        ]);
+
+        $saldo = Saldo::where('user_id', $data['user_id'])->sum('saldo');
+        return response()->json([
+            "saldo" => $saldo
+        ]);
+    }
+
     public function show($id)
     {
         $saldo = Saldo::findOrFail($id);
