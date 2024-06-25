@@ -162,6 +162,7 @@ class PortofolioJualController extends Controller
         
         $voltotal = null;
         $penjualan = null;
+        $equity = null;
 
         foreach ($result as $item) {
             if ($item['emiten'] === $saham['nama_saham']) {
