@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('dividens', function (Blueprint $table) {
             $table->id('id_dividen');
             $table->string('emiten');
-            $table->integer('dividen');
+            $table->string('dividen');
             $table->timestamps();
         });
     }

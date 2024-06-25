@@ -118,9 +118,20 @@ class ManajemenPortofolioController extends Controller
     }
 
 
-    public function mutasidana() {
+    public function yield(Request $request) {
         // modal valuasi awal
-        $valuasi_awal = Saldo::get();
+        $valuasi_awal = Saldo::where('user_id', $request->auth['user']['user_id'])->first()->toArray();
+        $harga_unit_awal = 1000;
+        $jumlah_unit = $valuasi_awal * $harga_unit_awal;
+
+        // valuasi saat ini = sum(hargaclose)
+        $harga_unit_saat_ini = $valuasisaatini / $jumlah_unit;
+        $yield = ($harga_unit - $harga_unit_awal) / $harga_unit_awal;
+
+
+
+        dd($saldo);
+
     }
 
 

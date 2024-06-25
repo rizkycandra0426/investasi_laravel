@@ -81,20 +81,25 @@ class StockAPIController extends Controller
 
     public function dividen(Request $request)
 {
-    
+    $data = $request->validate([
+        'emiten' => 'required',
+        'dividen' => 'required|numeric',
+    ]);
 
-    // Convert the dividen value to an integer
-    $dividenValue = (int) $request->input('dividen');
+    // Ensure dividen is a numeric value
+    $dividenValue = (float) $request->input('dividen');
+
+    // Format the dividen value
+    $formattedDividen = 'Rp. ' . number_format($dividenValue, 0, ',', '.');
 
     $dividen = Dividen::create([
         'emiten' => $request->input('emiten'),
-        'dividen' => $dividenValue,
+        'dividen' => $formattedDividen,
     ]);
-
-    // dd($dividen);
 
     return redirect('/')->with('status', 'Data emiten berhasil di update');
 }
+
 
 
 
