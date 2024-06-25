@@ -72,10 +72,9 @@ class PortofolioBeliController extends Controller
         $hargasaham = $response['data']['results'][0]['close'];
 
         // dd($hargasaham);
-
-        $pembelian = $data['volume_beli'] * $hargasaham;
+        $lot = 100;
+        $pembelian = $data['volume_beli'] * $lot * $hargasaham;
         // dd($volume);
-
 
         $sekuritas = Sekuritas::where('id_sekuritas', '=', $data['id_sekuritas'])->first()->toArray();
         $potongan = ceil($pembelian * $sekuritas['fee'] / 100);

@@ -100,6 +100,10 @@ class StockAPIController extends Controller
     return redirect('/')->with('status', 'Data emiten berhasil di update');
 }
 
+    public function indexdividen() {
+        return Dividen::paginate(10); 
+    }
+
 
 
 
