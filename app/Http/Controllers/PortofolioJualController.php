@@ -146,6 +146,7 @@ class PortofolioJualController extends Controller
         $saham = Saham::where('id_saham', '=', $jualporto['id_saham'])->first()->toArray();
         $voltotal = null;
         $penjualan = null;
+        $equity = null;
 
         foreach ($result as $item) {
             if ($item['emiten'] === $saham['nama_saham']) {
