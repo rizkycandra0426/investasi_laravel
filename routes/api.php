@@ -98,6 +98,7 @@ Route::get('/porto', [ManajemenPortofolioController::class, 'indexporto']);
 Route::get('/dividen', [StockAPIController::class, 'indexdivden']);
 Route::get('/berita', [BeritaController::class, 'index']);
 Route::get('/kurs', [KursController::class, 'index']);
+Route::get('/ihsg', [StockAPIController::class, 'ihsg']);
 
 Route::get('/stock/{$emiten}', [StockAPIController::class, 'stock']); // Harga
 Route::get('/stock', [StockAPIController::class, 'index']); // List Saham

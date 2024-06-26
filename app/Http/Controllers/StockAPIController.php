@@ -51,6 +51,27 @@ class StockAPIController extends Controller
         // dd($response);
     }
 
+    public function ihsg()
+    {
+        $response = Http::acceptJson()
+            ->withHeaders([
+                'X-API-KEY' => config('goapi.apikey')
+            ])->withoutVerifying() // Disable SSL verification
+            ->get('https://api.goapi.io/stock/idx/indices?symbols=COMPOSITE')
+            ->json();
+
+        // Filter the results to include only the specific symbol "BBCA"
+        $filteredResults = array_filter($response['data']['results'], function($result) {
+            return $result['symbol'] === 'COMPOSITE';
+        });
+
+        // Reset array keys
+        $filteredResults = array_values($filteredResults);
+
+        return response()->json(['response' => $filteredResults], 200);
+
+    }
+
     
 
     public function updateStock()
