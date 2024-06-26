@@ -170,28 +170,28 @@ class ManajemenPortofolioController extends Controller
 
 
 
-    public function yield(Request $request) {
-        // Mutasi Dana
-        $valuasi_awal = Saldo::where('user_id', $request->auth['user']['user_id'])
-            ->orderBy('created_at', 'asc')
-            ->first()
-            ->toArray();
-        $harga_unit_awal = 1000;
-        $jumlah_unit_awal = $valuasi_awal['saldo'] / $harga_unit_awal;
+    // public function yield(Request $request) {
+    //     // Mutasi Dana
+    //     $valuasi_awal = Saldo::where('user_id', $request->auth['user']['user_id'])
+    //         ->orderBy('created_at', 'asc')
+    //         ->first()
+    //         ->toArray();
+    //     $harga_unit_awal = 1000;
+    //     $jumlah_unit_awal = $valuasi_awal['saldo'] / $harga_unit_awal;
 
-        // Portofolio 
-        $total_valuasi = sum($vol_total * $harga_close);
-        $valuasi_saat_ini = $total_valuasi;
-        $jumlah_unit_penyertaan = $jumlah_unit_awal;
-        $harga_unit = $valuasi_saat_ini / $jumlah_unit_penyertaan;
+    //     // Portofolio 
+    //     $total_valuasi = sum($vol_total * $harga_close);
+    //     $valuasi_saat_ini = $total_valuasi;
+    //     $jumlah_unit_penyertaan = $jumlah_unit_awal;
+    //     $harga_unit = $valuasi_saat_ini / $jumlah_unit_penyertaan;
 
-        // Kinerja
-        $yield = ($harga_unit - $harga_unit_awal) / $harga_unit_awal;
-        $ihsg_start = 0;
-        $ihsg_end = 0;
-        $yield_ihsg = 0;
+    //     // Kinerja
+    //     $yield = ($harga_unit - $harga_unit_awal) / $harga_unit_awal;
+    //     $ihsg_start = 0;
+    //     $ihsg_end = 0;
+    //     $yield_ihsg = 0;
 
 
 
-    }
+    // }
 }
