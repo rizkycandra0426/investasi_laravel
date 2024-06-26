@@ -37,64 +37,65 @@ use App\Http\Middleware\GuestMiddleware;
 |
 */
 
-// Route::middleware([VerifyApiKey::class])->group(function () {
-//     Route::get('/auth', [AuthenticationController::class, 'auth']);
+Route::middleware([VerifyApiKey::class])->group(function () {
+    Route::get('/auth', [AuthenticationController::class, 'auth']);
 
-//     Route::middleware([GuestMiddleware::class])->group(function () {
-//         Route::post('/login-user', [AuthenticationController::class, 'loginUser']);
-//         Route::post('/register', [AuthenticationController::class, 'registerUser']);
+    Route::middleware([GuestMiddleware::class])->group(function () {
+        Route::post('/login-user', [AuthenticationController::class, 'loginUser']);
+        Route::post('/register', [AuthenticationController::class, 'registerUser']);
 
-//         Route::post('/login-admin', [AuthenticationController::class, 'loginAdmin']);
-//         Route::post('/register-admin', [AuthenticationController::class, 'registerAdmin']);
+        Route::post('/login-admin', [AuthenticationController::class, 'loginAdmin']);
+        Route::post('/register-admin', [AuthenticationController::class, 'registerAdmin']);
 
-//     });
+    });
 
-//     Route::middleware([AdminUserMiddleware::class])->group(function () {
-//         Route::post('/logout-user', [AuthenticationController::class, 'logoutUser']);
-//         Route::post('/category-requests', [CategoryRequestController::class, 'storeWeb']);
+    Route::middleware([AdminUserMiddleware::class])->group(function () {
+        Route::post('/logout-user', [AuthenticationController::class, 'logoutUser']);
+        Route::post('/category-requests', [CategoryRequestController::class, 'storeWeb']);
         
 
-//         Route::apiResource('pemasukans',PemasukanController::class);
-//         Route::get('/pemasukansWeb', [PemasukanController::class, 'indexWeb']);
+        Route::apiResource('pemasukans',PemasukanController::class);
+        Route::get('/pemasukansWeb', [PemasukanController::class, 'indexWeb']);
 
-//         Route::apiResource('pengeluarans', PengeluaranController::class);
-//         Route::get('/pengeluaransWeb', [PengeluaranController::class, 'indexWeb']);
+        Route::apiResource('pengeluarans', PengeluaranController::class);
+        Route::get('/pengeluaransWeb', [PengeluaranController::class, 'indexWeb']);
 
-//         Route::apiResource('anggarans', AnggaranController::class);
+        Route::apiResource('anggarans', AnggaranController::class);
 
-//         Route::apiResource('tagihans', TagihanController::class);
+        Route::apiResource('tagihans', TagihanController::class);
 
-//         Route::resource('kategori_pemasukans', KategoriPemasukanController::class);
-//         Route::get('/kategori_pemasukansWeb', [KategoriPemasukanController::class, 'indexWeb']);
+        Route::resource('kategori_pemasukans', KategoriPemasukanController::class);
+        Route::get('/kategori_pemasukansWeb', [KategoriPemasukanController::class, 'indexWeb']);
 
-//         Route::resource('kategori_pengeluarans', KategoriPengeluaranController::class);
-//         Route::get('/kategori_pengeluaransWeb', [KategoriPengeluaranController::class, 'indexWeb']);
+        Route::resource('kategori_pengeluarans', KategoriPengeluaranController::class);
+        Route::get('/kategori_pengeluaransWeb', [KategoriPengeluaranController::class, 'indexWeb']);
 
-//         Route::get('/category-request', [CategoryRequestController::class, 'index']);
-
-        
-
-//         Route::get('/transaction-histories/{month}/{year}', [TransactionHistoryController::class, 'filterByMonthAndYear']);
-//         Route::get('/transaction-histories/{year}', [TransactionHistoryController::class, 'filterByYear']);
-//         Route::get('/transaction-histories/categories/{month}/{year}', [TransactionHistoryController::class, 'filterCategoriesByMonthAndYear']);
-
-//         Route::get('/porto', [ManajemenPortofolioController::class, 'indexporto']);
-//         Route::get('/yield', [ManajemenPortofolioController::class, 'yield']);
-//         Route::apiResource('portofoliobeli', PortofolioBeliController::class);
-//         Route::apiResource('portofoliojual', PortofolioJualController::class);
+        Route::get('/category-request', [CategoryRequestController::class, 'index']);
 
         
+
+        Route::get('/transaction-histories/{month}/{year}', [TransactionHistoryController::class, 'filterByMonthAndYear']);
+        Route::get('/transaction-histories/{year}', [TransactionHistoryController::class, 'filterByYear']);
+        Route::get('/transaction-histories/categories/{month}/{year}', [TransactionHistoryController::class, 'filterCategoriesByMonthAndYear']);
+
+        Route::get('/porto', [ManajemenPortofolioController::class, 'indexporto']);
+        Route::get('/yield', [ManajemenPortofolioController::class, 'yield']);
+        Route::apiResource('portofoliobeli', PortofolioBeliController::class);
+        Route::apiResource('portofoliojual', PortofolioJualController::class);
+
         
-//     });
+        
+    });
     
-//     Route::middleware([AdminMiddleware::class])->group(function () {
-//         Route::get('/category-requests-admin', [CategoryRequestController::class, 'indexAdmin']);
-//         Route::post('/category-requests/{id}/approve', [CategoryRequestController::class, 'approve']);
-//         Route::post('/category-requests/{id}/reject', [CategoryRequestController::class, 'reject']);
+    Route::middleware([AdminMiddleware::class])->group(function () {
+        Route::get('/category-requests-admin', [CategoryRequestController::class, 'indexAdmin']);
+        Route::post('/category-requests/{id}/approve', [CategoryRequestController::class, 'approve']);
+        Route::post('/category-requests/{id}/reject', [CategoryRequestController::class, 'reject']);
         
-//     });
-// });
-Route::get('/dividen', [StockAPIController::class, 'indexdividen']);
+    });
+});
+
+Route::get('/dividen', [StockAPIController::class, 'indexdivden']);
 Route::get('/berita', [BeritaController::class, 'index']);
 Route::get('/kurs', [KursController::class, 'index']);
 
@@ -126,6 +127,8 @@ Route::resource('kategori_pengeluarans', KategoriPengeluaranController::class);
 
 Route::post('login', [AuthenticationController::class, 'login']);
 Route::post('register', [AuthenticationController::class, 'register']);
+Route::get('test-send-email', [AuthenticationController::class, 'testSendEmail']);
+Route::get('verify/{code}', [AuthenticationController::class, 'verify']);
 Route::post('logout', [AuthenticationController::class, 'logout']);
 
 Route::get('/transaction-histories/{month}/{year}', [TransactionHistoryController::class, 'filterByMonthAndYear']);
@@ -142,5 +145,3 @@ Route::get('/updatestock', [StockAPIController::class, 'updateStock']);
 Route::get('/emiten', [StockAPIController::class, 'getDataAdmin']);
 Route::get('/emiten/update', [StockAPIController::class, 'updateStock']);
 Route::get('/emiten/delete/{emiten}', [StockAPIController::class, 'delete']);
-
-

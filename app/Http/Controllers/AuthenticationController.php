@@ -22,9 +22,12 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\AuthenticationException;
 use Exception;
+use Illuminate\Support\Facades\Mail;
+
 class AuthenticationController extends Controller
 {
-    public function registerAdmin(Request $request) {
+    public function registerAdmin(Request $request)
+    {
         $validated = $request->validate([
             'email' => 'required',
             'name' => 'required',
@@ -53,13 +56,14 @@ class AuthenticationController extends Controller
         }
     }
 
-    public function loginAdmin (Request $request) {
+    public function loginAdmin(Request $request)
+    {
         $validated = $request->validate([
             'email' => 'required',
             'password' => 'required',
         ]);
         $admin = Admin::where('email', strtolower($validated['email']))->first();
-        if(isset($request->admin)) {
+        if (isset($request->admin)) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Masuk tidak diijinkan saat terautentikasi.',
@@ -78,7 +82,8 @@ class AuthenticationController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function registerUser(Request $request) {
+    public function registerUser(Request $request)
+    {
         $validated = $request->validate([
             'email' => 'required|unique:App\Models\User,email',
             'name' => 'required',
@@ -87,7 +92,8 @@ class AuthenticationController extends Controller
         $user = array(
             'email' => $request->email,
             'name' => $request->name,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'email_verification_code' => Str::random(60),
         );
 
         try {
@@ -98,17 +104,18 @@ class AuthenticationController extends Controller
                 'status' => 'success',
                 'message' => 'Berhasil daftar akun. Silahkan masuk sebagai user.',
                 'data' => Arr::only($user, ['user_id', 'email', 'name', 'created_at', 'updated_at']),
-            ], Response::HTTP_OK);            
+            ], Response::HTTP_OK);
         } catch (Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal daftar akun user.'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }          
-    } 
+        }
+    }
 
-    public function loginUser(Request $request) {
+    public function loginUser(Request $request)
+    {
         $validated = $request->validate([
             'email' => 'required',
             'password' => 'required',
@@ -128,9 +135,10 @@ class AuthenticationController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function auth(Request $request) {
-        if($request->header('user-type') == 'user'){
-            if($user = Auth::guard('users')->user()){
+    public function auth(Request $request)
+    {
+        if ($request->header('user-type') == 'user') {
+            if ($user = Auth::guard('users')->user()) {
                 $user = $this->user($user);
                 return response()->json([
                     'status' => 'success',
@@ -143,8 +151,8 @@ class AuthenticationController extends Controller
                 ], Response::HTTP_OK);
             }
         }
-        if($request->header('user-type') == 'admin'){
-            if($admin = Auth::guard('admins')->user()){
+        if ($request->header('user-type') == 'admin') {
+            if ($admin = Auth::guard('admins')->user()) {
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Admin terautentikasi.',
@@ -164,9 +172,10 @@ class AuthenticationController extends Controller
             ]
         ], Response::HTTP_OK);
     }
-     
-    public function logoutUser(Request $request){
-        if($request->auth['user_type'] == 'admin'){
+
+    public function logoutUser(Request $request)
+    {
+        if ($request->auth['user_type'] == 'admin') {
             $admin = Admin::find($request->auth['admin']['admin_id']);
             $admin->api_token = null;
             $admin->save();
@@ -178,7 +187,7 @@ class AuthenticationController extends Controller
                 ]
             ], Response::HTTP_OK);
         }
-        if($request->auth['user_type'] == 'user'){
+        if ($request->auth['user_type'] == 'user') {
             $user = User::find($request->auth['user']['user_id']);
             $user->api_token = null;
             $user->save();
@@ -261,8 +270,8 @@ class AuthenticationController extends Controller
         $checkuser = User::where('email', $request['email'])->first();
         if ($checkuser) {
             return response()->json([
-                'error' => 1, 
-                'message' => 'user already exists', 
+                'error' => 1,
+                'message' => 'user already exists',
                 'code' => 409
             ]);
         }
@@ -273,13 +282,66 @@ class AuthenticationController extends Controller
             'name' => $request['name'],
         ]);
 
+        // Send email with verification code Mailtrap?
+        // Mail::to($user->email)->send(new VerificationMail($user));
+        $email = $request['email'];
+        $subject = 'Silahkan verifikasi akun anda';
+        $message = "Silahkan verifikasi akun anda dengan klik link berikut: ' . url('/') . '/api/verify/' . $user->email_verification_code . ' Terima kasih.";
+
+        $x = Mail::raw($message, function ($message) use ($email, $subject) {
+            $message->to($email)
+                ->subject($subject);
+        });
+
         return response()->json([
-            'error' => 1, 
-            'message' => 'Registration Successfully', 
+            'error' => 1,
+            'message' => 'Registration Successfully',
             'code' => 200,
             "data" => $user
         ]);
 
         // return $this->successResponse($user, 'Registration Successfully');
+    }
+
+    public function testSendEmail()
+    {
+        //send plain text email to "coba@mailinator.com"?
+        $email = 'denyocr.world@gmail.com';
+        $subject = 'Silahkan verifikasi akun anda';
+        $message = "Silahkan verifikasi akun anda dengan klik link berikut: ' . url('/') . '/api/verify/testing Terima kasih.";
+
+        $x = Mail::raw($message, function ($message) use ($email, $subject) {
+            $message->to($email)
+                ->subject($subject);
+        });
+
+        return response()->json([
+            "message" => "Email sent!",
+            "x" => $x,
+            "email" => $email,
+            "subject" => $subject,
+            "message" => $message,
+        ]);
+    }
+
+    public function verify($code)
+    {
+        $user = User::where('email_verification_code', $code)->first();
+        if ($user) {
+            $user->email_verified_at = now();
+            $user->email_verification_code = null;
+            $user->save();
+            return response()->json([
+                'error' => 0,
+                'message' => 'Email Verified Successfully',
+                'code' => Response::HTTP_OK
+            ]);
+        } else {
+            return response()->json([
+                'error' => 1,
+                'message' => 'Invalid Verification Code',
+                'code' => Response::HTTP_NOT_FOUND
+            ]);
+        }
     }
 }

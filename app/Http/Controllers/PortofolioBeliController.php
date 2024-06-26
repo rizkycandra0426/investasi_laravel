@@ -82,19 +82,22 @@ class PortofolioBeliController extends Controller
         $data['pembelian'] = $pembelian + $potongan;
         $data['harga_beli'] = $hargasaham;
         
-        $saldo = Saldo::where('user_id', $request->auth['user']['user_id'])->first();
+        // Sum all 'saldo' values for the given user_id
+        $saldo = Saldo::where('user_id', $request->auth['user']['user_id'])->sum('saldo');
+        // dd($saldo);
+
 
         if (!$saldo) {
             return response()->json(['error' => 'Saldo not found for the user.'], 404);
         }
     
         // Check if saldo is sufficient
-        if ($saldo->saldo >= $data['pembelian']) {
+        if ($saldo >= $data['pembelian']) {
             // Deduct pembelian from saldo
-            $saldo->saldo -= $data['pembelian'];
-    
-            // Save the updated saldo
-            $saldo->save();
+            $addsaldo = Saldo::create([
+                'user_id' => $request->auth['user']['user_id'],
+                'saldo' => -($data['pembelian'])
+            ]);
     
         } else {
             return response()->json(['error' => 'Insufficient saldo.'], 400);

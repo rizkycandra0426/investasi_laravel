@@ -130,7 +130,7 @@ class PortofolioJualController extends Controller
             ->get('https://api.goapi.io/stock/idx/prices?symbols='. $data['nama_saham'])
             ->json();
         $hargasaham = $response['data']['results'][0]['close'];
-        $hargaclose = $vol_total * $hargasaham;
+        $hargaclose = $vol_total * 100 *$hargasaham;
         $data['return'] = $hargaclose - $data['equity'];
 
         $result[] = [
@@ -146,7 +146,7 @@ class PortofolioJualController extends Controller
         ];
     }
         
-        // dd($result[0]['return']);
+        // dd($result);
         
 
         $jualporto = $request->validate([
@@ -179,9 +179,9 @@ class PortofolioJualController extends Controller
         
         // dd($hargasaham);
 
-        // dd($jualporto['volume_jual'] <= $voltotal);
+        // dd($jualporto['volume_jual'], $voltotal);
         if($jualporto['volume_jual'] <= $voltotal) {
-            $penjualan = $jualporto['volume_jual'] * $hargasaham;
+            $penjualan = $jualporto['volume_jual'] * 100 * $hargasaham;
             if($penjualan <= $equity) {
 
                 $fee = ceil($penjualan *  $sekuritas['fee'] / 100);
@@ -197,7 +197,7 @@ class PortofolioJualController extends Controller
             return response()->json(['error' => 'vol tidak cukup.'], 400);
         }
 
-        $saldo = Saldo::where('user_id', $request->auth['user']['user_id'])->first();
+        $saldo = Saldo::where('user_id', $request->auth['user']['user_id'])->sum('saldo');
 
         if (!$saldo) {
             return response()->json(['error' => 'Saldo not found for the user.'], 404);
@@ -206,10 +206,15 @@ class PortofolioJualController extends Controller
         // Check if saldo is sufficient
        
             // Deduct pembelian from saldo
-        $saldo->saldo += $jualporto['penjualan'];
+
+        // dd($jualporto);
     
             // Save the updated saldo
-        $saldo->save();
+
+        $addsaldo = Saldo::create([
+            'user_id' => $request->auth['user']['user_id'],
+            'saldo' => ($jualporto['penjualan'])
+        ]);
     
         
           
