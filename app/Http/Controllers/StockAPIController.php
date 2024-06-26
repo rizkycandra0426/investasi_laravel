@@ -52,36 +52,36 @@ class StockAPIController extends Controller
     }
 
     public function ihsg()
-{
-    $response = Http::acceptJson()
-        ->withHeaders([
-            'X-API-KEY' => config('goapi.apikey')
-        ])->withoutVerifying() // Disable SSL verification
-        ->get('https://api.goapi.io/stock/idx/indices?symbols=COMPOSITE')
-        ->json();
+    {
+        $response = Http::acceptJson()
+            ->withHeaders([
+                'X-API-KEY' => config('goapi.apikey')
+            ])->withoutVerifying() // Disable SSL verification
+            ->get('https://api.goapi.io/stock/idx/indices?symbols=COMPOSITE')
+            ->json();
 
-    $ihsg = 7350;
+        $ihsg = 7350;
 
-    // Filter the results to include only the specific symbol "COMPOSITE"
-    $filteredResults = array_filter($response['data']['results'], function($result) {
-        return $result['symbol'] === 'COMPOSITE';
-    });
+        // Filter the results to include only the specific symbol "COMPOSITE"
+        $filteredResults = array_filter($response['data']['results'], function($result) {
+            return $result['symbol'] === 'COMPOSITE';
+        });
 
-    // Reset array keys
-    $filteredResults = array_values($filteredResults);
+        // Reset array keys
+        $filteredResults = array_values($filteredResults);
 
-    $ihsg_end = $filteredResults[0]['price']['close'];
+        $ihsg_end = $filteredResults[0]['price']['close'];
 
-    $yield_ihsg = ($ihsg_end - $ihsg) / $ihsg;
+        $yield_ihsg = ($ihsg_end - $ihsg) / $ihsg;
 
-    // Convert the yield to a percentage
-    $yield_percentage = $yield_ihsg * 100;
+        // Convert the yield to a percentage
+        $yield_percentage = $yield_ihsg * 100;
 
-    // Format the percentage to 2 decimal places and append "%"
-    $yield_percentage_formatted = number_format($yield_percentage, 2) . '%';
+        // Format the percentage to 2 decimal places and append "%"
+        $yield_percentage_formatted = number_format($yield_percentage, 2) . '%';
 
-    return response()->json($yield_percentage_formatted);
-}
+        return response()->json($yield_percentage_formatted);
+    }
 
 
 

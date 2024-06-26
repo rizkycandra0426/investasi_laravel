@@ -114,8 +114,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/category-requests', [CategoryRequestController::class, 'store']); // Simpan Category
 Route::get('/category-requests', [CategoryRequestController::class, 'indexMobile']); // List request categorie
 
-// Route::apiResource('portofoliobeli', PortofolioBeliController::class);
-// Route::apiResource('portofoliojual', PortofolioJualController::class);
+Route::apiResource('portofoliobeli', PortofolioBeliController::class);
+Route::apiResource('portofoliojual', PortofolioJualController::class);
 Route::post('saldo/user', [SaldoController::class, 'saldoUser']);
 Route::apiResource('saldo', SaldoController::class);
 Route::apiResource('sekuritas', SekuritasController::class);

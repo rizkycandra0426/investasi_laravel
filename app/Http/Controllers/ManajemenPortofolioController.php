@@ -20,6 +20,8 @@ class ManajemenPortofolioController extends Controller
     public function indexporto(Request $request)
 {
     // Fetch buy and sell portfolios
+    // dd($request->auth['user']['user_id']);
+
     $portobeli = PortofolioBeli::where('user_id', $request->auth['user']['user_id'])->with('emiten')->get()->toArray();
     $portojual = PortofolioJual::where('user_id', $request->auth['user']['user_id'])->with('emiten')->get()->toArray();
 
