@@ -133,16 +133,15 @@ class ManajemenPortofolioController extends Controller
     foreach ($result as $item) {
         if ($item['vol_total'] > 0) {
             // dd($item['equity']);
-            $valuasi_saat_ini += $item['equity'];
-            // dd($valuasi_saat_ini += $item['equity']);
-            $valuasi_saat_ini = $valuasi_awal-$valuasi_saat_ini+$item['equity'];
+            $valuasi_saat_ini = $valuasi_saat_ini + $item['equity'];
+            $valuasi_saat_ini = $valuasi_awal-$valuasi_saat_ini + $item['equity'] + $item['return'];
             // dd($valuasi_saat_ini);
         }
     }
 
 
     $jumlah_unit_penyertaan = $jumlah_unit_awal;
-    $harga_unit =$jumlah_unit_penyertaan < 0 ? round($valuasi_saat_ini / $jumlah_unit_penyertaan) : 0;
+    $harga_unit =$jumlah_unit_penyertaan > 0 ? round($valuasi_saat_ini / $jumlah_unit_penyertaan) : 0;
     $yield = $valuasi_saat_ini > 0 ? round((($harga_unit - $harga_unit_awal) / $harga_unit_awal) * 100, 2) : 0;
     $yield_percentage = number_format($yield, 2) . '%';
 

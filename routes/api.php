@@ -94,7 +94,7 @@ Route::middleware([VerifyApiKey::class])->group(function () {
         
     });
 });
-
+// Route::get('/porto', [ManajemenPortofolioController::class, 'indexporto']);
 Route::get('/dividen', [StockAPIController::class, 'indexdivden']);
 Route::get('/berita', [BeritaController::class, 'index']);
 Route::get('/kurs', [KursController::class, 'index']);
