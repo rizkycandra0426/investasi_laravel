@@ -20,7 +20,7 @@ class CategoryRequestController extends Controller
     {
         try {
             $categoryRequest = new CategoryRequest();
-            $categoryRequest = CategoryRequest::where('user_id', $request->auth['user']['user_id'])
+            $categoryRequest = CategoryRequest::where('user_id',request()->user_id)
                                         ->get();
             
             return response()->json([
@@ -106,15 +106,11 @@ class CategoryRequestController extends Controller
             return response()->json(['message' => 'Category name already exists in the selected category type.'], 422);
         }
 
-        $token = request()->bearerToken();
-        $accessToken = PersonalAccessToken::findToken($token);
-        $current_user = $accessToken->tokenable;
-
         // Create the category request
         CategoryRequest::create([
             'category_type' => $request->category_type,
             'nama_kategori' => $request->nama_kategori,
-            'user_id' => $current_user->user_id, // Assuming you are using the Laravel Auth system
+            'user_id' => request()->user_id, // Assuming you are using the Laravel Auth system
         ]);
 
         return response()->json(['message' => 'Category request submitted successfully.']);

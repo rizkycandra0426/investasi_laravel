@@ -8,11 +8,13 @@ use Illuminate\Support\Facades\Http;
 use App\Models\Saham;
 use App\Models\Dividen;
 use Carbon\Carbon;
+
 class StockAPIController extends Controller
 {
     public function index()
     {
-        return Saham::paginate(10);
+        $searchQuery = request()->input('search');
+        return Saham::where('nama_saham', 'like', '%' . $searchQuery . '%')->paginate(10);
     }
 
     public function indexStock()
@@ -25,7 +27,6 @@ class StockAPIController extends Controller
             ->json();
 
         $data = $response['data']['results'];
-
         return response()->json(['message' => 'Pemasukan created', 'data' => $data], 200);
     }
 
@@ -43,7 +44,7 @@ class StockAPIController extends Controller
             ->withHeaders([
                 'X-API-KEY' => config('goapi.apikey')
             ])->withoutVerifying() // Disable SSL verification
-            ->get('https://api.goapi.io/stock/idx/prices?symbols='. $emiten)
+            ->get('https://api.goapi.io/stock/idx/prices?symbols=' . $emiten)
             ->json();
 
         return response()->json(['response' => $response], 200);
@@ -63,7 +64,7 @@ class StockAPIController extends Controller
         $ihsg = 7350;
 
         // Filter the results to include only the specific symbol "COMPOSITE"
-        $filteredResults = array_filter($response['data']['results'], function($result) {
+        $filteredResults = array_filter($response['data']['results'], function ($result) {
             return $result['symbol'] === 'COMPOSITE';
         });
 
@@ -85,7 +86,7 @@ class StockAPIController extends Controller
 
 
 
-    
+
 
     public function updateStock()
     {
@@ -110,88 +111,92 @@ class StockAPIController extends Controller
         }
 
         return redirect('/')->with('status', 'Data emiten berhasil di update');
-
     }
 
     public function dividen(Request $request)
-{
-    $data = $request->validate([
-        'emiten' => 'required',
-        'dividen' => 'required|numeric',
-    ]);
+    {
+        $data = $request->validate([
+            'emiten' => 'required',
+            'dividen' => 'required|numeric',
+        ]);
 
-    // Ensure dividen is a numeric value
-    $dividenValue = (float) $request->input('dividen');
+        // Ensure dividen is a numeric value
+        $dividenValue = (float) $request->input('dividen');
 
-    // Format the dividen value
-    $formattedDividen = 'Rp. ' . number_format($dividenValue, 0, ',', '.');
+        // Format the dividen value
+        $formattedDividen = 'Rp. ' . number_format($dividenValue, 0, ',', '.');
 
-    $dividen = Dividen::create([
-        'emiten' => $request->input('emiten'),
-        'dividen' => $formattedDividen,
-    ]);
+        $dividen = Dividen::create([
+            'emiten' => $request->input('emiten'),
+            'dividen' => $formattedDividen,
+        ]);
 
-    return redirect('/')->with('status', 'Data emiten berhasil di update');
-}
-
-    public function indexdividen() {
-        return Dividen::paginate(10); 
+        return redirect('/')->with('status', 'Data emiten berhasil di update');
     }
 
-
-
-
+    public function indexdividen()
+    {
+        return Dividen::paginate(10);
+    }
 
     public function historical_30hari($symbol)
     {
         $end = Carbon::now()->format('Y-m-d');
-        
+
         $start = Carbon::now()->subDays(30)->format('Y-m-d');
         $response = Http::acceptJson()
             ->withHeaders([
                 'X-API-KEY' => config('goapi.apikey')
-            ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/'.$symbol.'/historical?from='.$start.'&to='.$end)->json();
+            ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/' . $symbol . '/historical?from=' . $start . '&to=' . $end)->json();
 
-        return response()->json(['response' => $response], 200);
+        return response()->json([
+            "data" => $response["data"]["results"]
+        ], 200);
     }
 
     public function historical_60hari($symbol)
     {
         $end = Carbon::now()->format('Y-m-d');
-        
+
         $start = Carbon::now()->subDays(60)->format('Y-m-d');
         $response = Http::acceptJson()
             ->withHeaders([
                 'X-API-KEY' => config('goapi.apikey')
-            ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/'.$symbol.'/historical?from='.$start.'&to='.$end)->json();
+            ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/' . $symbol . '/historical?from=' . $start . '&to=' . $end)->json();
 
-        return response()->json(['response' => $response], 200);
+        return response()->json([
+            "data" => $response["data"]["results"]
+        ], 200);
     }
 
     public function historical_90hari($symbol)
     {
         $end = Carbon::now()->format('Y-m-d');
-        
+
         $start = Carbon::now()->subDays(90)->format('Y-m-d');
         $response = Http::acceptJson()
             ->withHeaders([
                 'X-API-KEY' => config('goapi.apikey')
-            ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/'.$symbol.'/historical?from='.$start.'&to='.$end)->json();
+            ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/' . $symbol . '/historical?from=' . $start . '&to=' . $end)->json();
 
-        return response()->json(['response' => $response], 200);
+        return response()->json([
+            "data" => $response["data"]["results"]
+        ], 200);
     }
 
     public function historical_1tahun($symbol)
     {
         $end = Carbon::now()->format('Y-m-d');
-        
+
         $start = Carbon::now()->subDays(360)->format('Y-m-d');
         $response = Http::acceptJson()
             ->withHeaders([
                 'X-API-KEY' => config('goapi.apikey')
-            ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/'.$symbol.'/historical?from='.$start.'&to='.$end)->json();
+            ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/' . $symbol . '/historical?from=' . $start . '&to=' . $end)->json();
 
-        return response()->json(['response' => $response], 200);
+        return response()->json([
+            "data" => $response["data"]["results"]
+        ], 200);
     }
 
     // 30, 60, 90, 1 tahun

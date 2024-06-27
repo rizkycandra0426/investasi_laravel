@@ -7,7 +7,9 @@ use App\Models\Pemasukan;
 use App\Http\Controllers\Controller;
 use App\Models\KategoriPengeluaran;
 use App\Models\Pengeluaran;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class TransactionHistoryController extends Controller
 {
@@ -23,6 +25,7 @@ class TransactionHistoryController extends Controller
 
         $pemasukan = new Pemasukan();
         $pemasukan = $pemasukan->with("kategori_pemasukan");
+        $pemasukan = $pemasukan->where('user_id', request()->user_id);
 
         if ($month !== null) {
             $pemasukan = $pemasukan->whereMonth('created_at', $month);
@@ -33,6 +36,7 @@ class TransactionHistoryController extends Controller
         }
 
         $pengeluaran = new Pengeluaran();
+        $pengeluaran = $pengeluaran->where('user_id', request()->user_id);
         $pengeluaran->with("kategori_pengeluaran");
 
         if ($month !== null) {
@@ -79,7 +83,10 @@ class TransactionHistoryController extends Controller
         $created_at = array_column($all, 'created_at');
         array_multisort($created_at, SORT_DESC, $all);
 
-        return response()->json(['data' => $all], 200);
+        return response()->json([
+            'data' => $all,
+            'user_id' => request()->user_id,
+        ], 200);
     }
     public function filterByYear($year = null)
     {
@@ -89,8 +96,12 @@ class TransactionHistoryController extends Controller
             $startDate = "$year-$month-01";
             $endDate = date('Y-m-t', strtotime($startDate));
 
-            $totalPemasukan = Pemasukan::whereBetween('tanggal', [$startDate, $endDate])->sum('jumlah');
-            $totalPengeluaran = Pengeluaran::whereBetween('tanggal', [$startDate, $endDate])->sum('jumlah');
+            $totalPemasukan = Pemasukan::whereBetween('tanggal', [$startDate, $endDate])
+                ->where("user_id", request()->user_id)
+                ->sum('jumlah');
+            $totalPengeluaran = Pengeluaran::whereBetween('tanggal', [$startDate, $endDate])
+                ->where("user_id", request()->user_id)
+                ->sum('jumlah');
 
             $monthlyData[] = [
                 'month' => date('F', strtotime($startDate)),
@@ -120,6 +131,8 @@ class TransactionHistoryController extends Controller
 
         // Query untuk menghitung total pengeluaran per kategori
         $totalPengeluaran = Pengeluaran::whereMonth('tanggal', $month)
+            ->where("user_id", request()->user_id)
+            ->where('user_id', request()->user_id)
             ->whereYear('tanggal', $year)
             ->select('id_kategori_pengeluaran', DB::raw('SUM(jumlah) as total'))
             ->groupBy('id_kategori_pengeluaran')

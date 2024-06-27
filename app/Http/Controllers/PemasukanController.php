@@ -9,21 +9,19 @@ use App\Models\Pengeluaran;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class PemasukanController extends Controller
 {
     public function index(Request $request)
     {
-        $data = $request->validate([
-            'user_id' => 'required',
-        ]);
-        return Pemasukan::where('user_id', $data['user_id'])->paginate(10);
+        return Pemasukan::where('user_id', request()->user_id)->paginate(10);
     }
 
     public function indexWeb(Request $request) {
         try {
             $pemasukan = new Pemasukan();
-            $pemasukan = Pemasukan::where('user_id', $request->auth['user']['user_id'])
+            $pemasukan = Pemasukan::where('user_id',request()->user_id)
                                 ->with('kategori_pemasukan')
                                 ->get();
             
@@ -54,13 +52,13 @@ class PemasukanController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'user_id' => 'required',
             'tanggal' => 'required',
             'jumlah' => 'required',
             'catatan' => 'nullable',
             'id_kategori_pemasukan' => 'required',
         ]);
 
+        $data["user_id"] = request()->user_id;
         $pemasukan = Pemasukan::create($data);
         return response()->json(['message' => 'Pemasukan created', 'pemasukan' => $pemasukan], 201);
     }
@@ -75,7 +73,6 @@ class PemasukanController extends Controller
     {
         $pemasukan = Pemasukan::findOrFail($id);
         $data = $request->validate([
-            'user_id' => 'required',
             'tanggal' => 'required',
             'jumlah' => 'required',
             'catatan' => 'nullable',

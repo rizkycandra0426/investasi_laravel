@@ -22,6 +22,7 @@ use App\Http\Controllers\KursController;
 use App\Http\Controllers\PostBeliController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AdminUserMiddleware;
+use App\Http\Middleware\ApiMiddleware;
 use App\Http\Middleware\VerifyApiKey;
 use App\Http\Middleware\UserMiddleware;
 use App\Http\Middleware\GuestMiddleware;
@@ -52,7 +53,7 @@ use App\Http\Middleware\GuestMiddleware;
 //     Route::middleware([AdminUserMiddleware::class])->group(function () {
 //         Route::post('/logout-user', [AuthenticationController::class, 'logoutUser']);
 //         Route::post('/category-requests', [CategoryRequestController::class, 'storeWeb']);
-        
+
 
 //         Route::apiResource('pemasukans',PemasukanController::class);
 //         Route::get('/pemasukansWeb', [PemasukanController::class, 'indexWeb']);
@@ -72,7 +73,7 @@ use App\Http\Middleware\GuestMiddleware;
 
 //         Route::get('/category-request', [CategoryRequestController::class, 'index']);
 
-        
+
 
 //         Route::get('/transaction-histories/{month}/{year}', [TransactionHistoryController::class, 'filterByMonthAndYear']);
 //         Route::get('/transaction-histories/{year}', [TransactionHistoryController::class, 'filterByYear']);
@@ -83,66 +84,72 @@ use App\Http\Middleware\GuestMiddleware;
 //         Route::apiResource('portofoliobeli', PortofolioBeliController::class);
 //         Route::apiResource('portofoliojual', PortofolioJualController::class);
 
-        
-        
+
+
 //     });
-    
+
 //     Route::middleware([AdminMiddleware::class])->group(function () {
 //         Route::get('/category-requests-admin', [CategoryRequestController::class, 'indexAdmin']);
 //         Route::post('/category-requests/{id}/approve', [CategoryRequestController::class, 'approve']);
 //         Route::post('/category-requests/{id}/reject', [CategoryRequestController::class, 'reject']);
-        
+
 //     });
 // });
-Route::get('/porto', [ManajemenPortofolioController::class, 'indexporto']);
-Route::get('/dividen', [StockAPIController::class, 'indexdivden']);
-Route::get('/berita', [BeritaController::class, 'index']);
-Route::get('/kurs', [KursController::class, 'index']);
-Route::get('/ihsg', [StockAPIController::class, 'ihsg']);
-
-Route::get('/stock/{$emiten}', [StockAPIController::class, 'stock']); // Harga
-Route::get('/stock', [StockAPIController::class, 'index']); // List Saham
-Route::get('/stock', [StockAPIController::class, 'indexStock']);
-
-Route::get('/stocks', [StockAPIController::class, 'index']);
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware(ApiMiddleware::class)->group(function () {
+    Route::get('/porto', [ManajemenPortofolioController::class, 'indexporto']);
+    Route::get('/dividen', [StockAPIController::class, 'indexdividen']);
+    Route::get('/berita', [BeritaController::class, 'index']);
+    Route::get('/kurs', [KursController::class, 'index']);
+    Route::get('/ihsg', [StockAPIController::class, 'ihsg']);
+
+    Route::get('/stock/{emiten}', [StockAPIController::class, 'stock']); // Harga
+    Route::get('/stock', [StockAPIController::class, 'index']); // List Saham
+    // Route::get('/stock', [StockAPIController::class, 'indexStock']);
+
+    Route::get('/stocks', [StockAPIController::class, 'index']);
+
+
+    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::post('/category-requests', [CategoryRequestController::class, 'store']); // Simpan Category
+    Route::get('/category-requests', [CategoryRequestController::class, 'indexMobile']); // List request categorie
+
+    Route::apiResource('portofoliobeli', PortofolioBeliController::class);
+    Route::apiResource('portofoliojual', PortofolioJualController::class);
+    Route::post('saldo/user', [SaldoController::class, 'saldoUser']);
+    Route::apiResource('saldo', SaldoController::class);
+    Route::apiResource('sekuritas', SekuritasController::class);
+
+    Route::apiResource('pemasukans', PemasukanController::class);
+    Route::apiResource('pengeluarans', PengeluaranController::class);
+    Route::apiResource('tagihans', TagihanController::class);
+    Route::resource('kategori_pemasukans', KategoriPemasukanController::class);
+    Route::resource('kategori_pengeluarans', KategoriPengeluaranController::class);
+
+    Route::post('login', [AuthenticationController::class, 'login']);
+    Route::post('register', [AuthenticationController::class, 'register']);
+    Route::get('test-send-email', [AuthenticationController::class, 'testSendEmail']);
+    Route::get('verify/{code}', [AuthenticationController::class, 'verify']);
+    Route::post('logout', [AuthenticationController::class, 'logout']);
+
+    Route::get('/transaction-histories/{month}/{year}', [TransactionHistoryController::class, 'filterByMonthAndYear']);
+    Route::get('/transaction-histories/{year}', [TransactionHistoryController::class, 'filterByYear']);
+    Route::get('/transaction-histories/categories/{month}/{year}', [TransactionHistoryController::class, 'filterCategoriesByMonthAndYear']);
+
+
+
+    // Route buat manggil histori saham
+    Route::get('/histori_30hari/{symbol}', [StockAPIController::class, 'historical_30hari']);
+    Route::get('/histori_60hari/{symbol}', [StockAPIController::class, 'historical_60hari']);
+    Route::get('/histori_90hari/{symbol}', [StockAPIController::class, 'historical_90hari']);
+    Route::get('/histori_1tahun/{symbol}', [StockAPIController::class, 'historical_1tahun']);
+
+    Route::get('/updatestock', [StockAPIController::class, 'updateStock']);
+    Route::get('/emiten', [StockAPIController::class, 'getDataAdmin']);
+    Route::get('/emiten/update', [StockAPIController::class, 'updateStock']);
+    Route::get('/emiten/delete/{emiten}', [StockAPIController::class, 'delete']);
 });
-
-Route::post('/category-requests', [CategoryRequestController::class, 'store']); // Simpan Category
-Route::get('/category-requests', [CategoryRequestController::class, 'indexMobile']); // List request categorie
-
-Route::apiResource('portofoliobeli', PortofolioBeliController::class);
-Route::apiResource('portofoliojual', PortofolioJualController::class);
-Route::post('saldo/user', [SaldoController::class, 'saldoUser']);
-Route::apiResource('saldo', SaldoController::class);
-Route::apiResource('sekuritas', SekuritasController::class);
-
-Route::apiResource('pemasukans',PemasukanController::class);
-Route::apiResource('pengeluarans', PengeluaranController::class);
-Route::apiResource('tagihans', TagihanController::class);
-Route::resource('kategori_pemasukans', KategoriPemasukanController::class);
-Route::resource('kategori_pengeluarans', KategoriPengeluaranController::class);
-
-Route::post('login', [AuthenticationController::class, 'login']);
-Route::post('register', [AuthenticationController::class, 'register']);
-Route::get('test-send-email', [AuthenticationController::class, 'testSendEmail']);
-Route::get('verify/{code}', [AuthenticationController::class, 'verify']);
-Route::post('logout', [AuthenticationController::class, 'logout']);
-
-Route::get('/transaction-histories/{month}/{year}', [TransactionHistoryController::class, 'filterByMonthAndYear']);
-Route::get('/transaction-histories/{year}', [TransactionHistoryController::class, 'filterByYear']);
-Route::get('/transaction-histories/categories/{month}/{year}', [TransactionHistoryController::class, 'filterCategoriesByMonthAndYear']);
-
-// Route buat manggil histori saham
-Route::get('/histori_30hari/{symbol}', [StockAPIController::class, 'historical_30hari']);
-Route::get('/histori_60hari/{symbol}', [StockAPIController::class, 'historical_60hari']);
-Route::get('/histori_90hari/{symbol}', [StockAPIController::class, 'historical_90hari']);
-Route::get('/histori_1tahun/{symbol}', [StockAPIController::class, 'historical_1tahun']);
-
-Route::get('/updatestock', [StockAPIController::class, 'updateStock']);
-Route::get('/emiten', [StockAPIController::class, 'getDataAdmin']);
-Route::get('/emiten/update', [StockAPIController::class, 'updateStock']);
-Route::get('/emiten/delete/{emiten}', [StockAPIController::class, 'delete']);

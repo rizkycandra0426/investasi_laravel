@@ -16,13 +16,13 @@ class SekuritasController extends Controller
      */
     public function index()
     {
-        return Sekuritas::paginate(10);
+        return Sekuritas::where("user_id", request()->user_id)->paginate(10);
     }
 
     public function indexWeb(Request $request) {
         try {
             $sekuritas = new Sekuritas();
-            $sekuritas = Sekuritas::where('user_id', $request->auth['user']['user_id'])
+            $sekuritas = Sekuritas::where('user_id',request()->user_id)
                                 ->with('kategori_pemasukan')
                                 ->get();
             
@@ -58,6 +58,7 @@ class SekuritasController extends Controller
             'fee_jual' => 'required',
         ]);
 
+        $data['user_id'] = request()->user_id;
         $sekuritas = Sekuritas::create($data);
         return response()->json(['message' => 'Sekuritas created', 'sekuritas' => $sekuritas], 201);
     }

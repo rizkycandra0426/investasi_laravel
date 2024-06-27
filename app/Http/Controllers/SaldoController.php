@@ -16,13 +16,13 @@ class SaldoController extends Controller
      */
     public function index()
     {
-        return Saldo::paginate(10);
+        return Saldo::where("user_id", request()->user_id)->paginate(10);
     }
 
     public function indexWeb(Request $request) {
         try {
             $saldo = new Saldo();
-            $saldo = Saldo::where('user_id', $request->auth['user']['user_id'])
+            $saldo = Saldo::where('user_id',request()->user_id)
                                 ->with('kategori_pemasukan')
                                 ->get();
             
@@ -53,10 +53,10 @@ class SaldoController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'user_id' => 'required',
             'saldo' => 'required',
         ]);
 
+        $data['user_id'] = request()->user_id;
         $saldo = Saldo::create($data);
         return response()->json(['message' => 'Saldo created', 'saldo' => $saldo], 201);
     }
@@ -64,10 +64,10 @@ class SaldoController extends Controller
     public function saldoUser(Request $request)
     {
         $data = $request->validate([
-            'user_id' => 'required',
+
         ]);
 
-        $saldo = Saldo::where('user_id', $data['user_id'])->sum('saldo');
+        $saldo = Saldo::where('user_id', request()->user_id)->sum('saldo');
         return response()->json([
             "saldo" => $saldo
         ]);
@@ -83,7 +83,6 @@ class SaldoController extends Controller
     {
         $saldo = Saldo::findOrFail($id);
         $data = $request->validate([
-            'user_id' => 'required',
             'saldo' => 'required',
         ]);
 

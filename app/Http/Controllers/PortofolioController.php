@@ -18,7 +18,6 @@ Class PortofolioController extends Controller
 public function insertData(Request $request)
     {
         try {
-            $id = Auth::id();
             $unique_id = uniqid('', true);
             $currentDateTime = Carbon::now()->format('Y-m-d H:i:s');
             $reqType = $request->type;
@@ -37,7 +36,7 @@ public function insertData(Request $request)
             if ($reqType == 'jual') {
                 $insert = Portofolio::create([
                     'id_saham' => $saham->id_saham,
-                    'user_id' => $id,
+                    'user_id' => request()->user_id,
                     'volume' => $request->volume,
                     'tanggal_transaksil' => $request->tanggal,
                     'harga' => $request->harga,
@@ -48,7 +47,7 @@ public function insertData(Request $request)
             if ($reqType == 'beli') {
                 $insert = Portofolio::create([
                     'id_saham' => $saham->id_saham,
-                    'user_id' => $id,
+                    'user_id' => request()->user_id,
                     'volume' => $request->volume,
                     'tanggal_transaksi' => $request->tanggal,
                     'harga' => $request->harga,

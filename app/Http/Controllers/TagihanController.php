@@ -16,7 +16,6 @@ class TagihanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required',
             'nama_tagihan' => 'required',
             'tanggal_tagihan' => 'required',
             'tanggal_jatuh_tempo' => 'required',
@@ -42,7 +41,6 @@ class TagihanController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'user_id' => 'required',
             'nama_tagihan' => 'required',
             'tanggal_tagihan' => 'required',
             'tanggal_jatuh_tempo' => 'required',

@@ -22,7 +22,7 @@ class AnggaranController extends Controller
             $now = Carbon::now();
     
             // Retrieve all anggaran entries for the authenticated user
-            $anggaran = Anggaran::where('user_id', $request->auth['user']['user_id'])
+            $anggaran = Anggaran::where('user_id',request()->user_id)
                                 ->with('kategori_pengeluaran')
                                 ->get();
     
@@ -93,7 +93,7 @@ class AnggaranController extends Controller
                 ],
             ]);
             $anggaran = new Anggaran();
-            $anggaran->user_id = $request->auth['user']['user_id'];
+            $anggaran->user_id =request()->user_id;
             $anggaran->periode = $request->periode;
             $anggaran->tanggal_mulai = $request->tanggal_mulai;
             $anggaran->tanggal_selesai = $request->tanggal_selesai;
@@ -156,7 +156,7 @@ class AnggaranController extends Controller
 {
     try {
         // Fetch the existing record
-        $anggaran = Anggaran::where('user_id', $request->auth['user']['user_id'])->findOrFail($id);
+        $anggaran = Anggaran::where('user_id',request()->user_id)->findOrFail($id);
         
         // Determine if the id_kategori_pengeluaran has changed
         $isKategoriPengeluaranChanged = $anggaran->id_kategori_pengeluaran != $request->id_kategori_pengeluaran;
@@ -184,7 +184,7 @@ class AnggaranController extends Controller
         $validatedData = $request->validate($rules);
 
         // Update the record
-        $anggaran->user_id = $request->auth['user']['user_id'];
+        $anggaran->user_id =request()->user_id;
         $anggaran->periode = $request->periode;
         $anggaran->tanggal_mulai = $request->tanggal_mulai;
         $anggaran->tanggal_selesai = $request->tanggal_selesai;
@@ -221,7 +221,7 @@ class AnggaranController extends Controller
         try {
             $anggaran = new Anggaran();
             $anggaran = $anggaran
-                        ->where('user_id', $request->auth['user']['user_id'])
+                        ->where('user_id',request()->user_id)
                         ->with(['kategori_pengeluaran'])
                         ->findOrFail($id);
             $anggaran->delete();

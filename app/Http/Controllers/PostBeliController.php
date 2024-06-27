@@ -25,8 +25,8 @@ class PostBeliController extends Controller
     public function indexporto(Request $request)
 {
     // Fetch buy and sell portfolios
-    $portobeli = PortofolioBeli::where('user_id', $request->auth['user']['user_id'])->with('emiten')->get()->toArray();
-    $portojual = PortofolioJual::where('user_id', $request->auth['user']['user_id'])->with('emiten')->get()->toArray();
+    $portobeli = PortofolioBeli::where('user_id',request()->user_id)->with('emiten')->get()->toArray();
+    $portojual = PortofolioJual::where('user_id',request()->user_id)->with('emiten')->get()->toArray();
 
     // Initialize variables
     $groupedByEmiten = [];

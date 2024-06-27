@@ -20,15 +20,15 @@ class PortofolioJualController extends Controller
     public function index(Request $request)
     {
         $data = $request->validate([
-            'user_id' => 'required',
+
         ]);
-        return PortofolioJual::where('user_id', $data['user_id'])->paginate(10);
+        return PortofolioJual::where('user_id', request()->user_id)->paginate(10);
     }
 
     public function indexWeb(Request $request) {
         try {
             $portofolioJual = new PortofolioJual();
-            $portofolioJual = PortofolioJual::where('user_id', $request->auth['user']['user_id'])
+            $portofolioJual = PortofolioJual::where('user_id',request()->user_id)
                                 ->with('kategori_pemasukan')
                                 ->get();
             
@@ -60,11 +60,11 @@ class PortofolioJualController extends Controller
     {
         // dd($request->auth['user']['user_id']);
         $data = $request->validate([
-            'user_id' => 'required',
+
         ]);
         
-        $portobeli = PortofolioBeli::where('user_id', $data['user_id'])->with('emiten')->get()->toArray();
-        $portojual = PortofolioJual::where('user_id', $data['user_id'])->with('emiten')->get()->toArray();
+        $portobeli = PortofolioBeli::where('user_id', request()->user_id)->with('emiten')->get()->toArray();
+        $portojual = PortofolioJual::where('user_id', request()->user_id)->with('emiten')->get()->toArray();
         // dd($portojual);
     
         // Check if portfolios are not null
@@ -157,7 +157,6 @@ class PortofolioJualController extends Controller
         
 
         $jualporto = $request->validate([
-            'user_id' => 'required',
             'id_saham' => 'required',
             'tanggal_jual' => 'required',
             'volume_jual' => ' required',
@@ -204,7 +203,7 @@ class PortofolioJualController extends Controller
             return response()->json(['error' => 'vol tidak cukup.'], 400);
         }
 
-        $saldo = Saldo::where('user_id', $data['user_id'])->sum('saldo');
+        $saldo = Saldo::where('user_id', request()->user_id)->sum('saldo');
 
         if (!$saldo) {
             return response()->json(['error' => 'Saldo not found for the user.'], 404);
@@ -219,7 +218,7 @@ class PortofolioJualController extends Controller
             // Save the updated saldo
 
         $addsaldo = Saldo::create([
-            'user_id' => $data['user_id'],
+            'user_id' => request()->user_id,
             'saldo' => ($jualporto['penjualan'])
         ]);
     
@@ -241,7 +240,6 @@ class PortofolioJualController extends Controller
     {
         $portofolioJual = PortofolioJual::findOrFail($id);
         $data = $request->validate([
-            'user_id' => 'required',
             'id_saham' => 'required',
             'volume_jual' => 'required',
             'tanggal_jual' => 'required',

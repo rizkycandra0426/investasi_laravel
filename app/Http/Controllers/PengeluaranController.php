@@ -14,16 +14,16 @@ class PengeluaranController extends Controller
     public function index(Request $request)
     {
         $data = $request->validate([
-            'user_id' => 'required',
+            
         ]);
-        return Pengeluaran::where('user_id', $data['user_id'])->paginate(10);
+        return Pengeluaran::where('user_id', request()->user_id)->paginate(10);
     }
 
     public function indexWeb(Request $request) {
         try {
             $pengeluaran = new Pengeluaran();
             $pengeluaran = $pengeluaran
-                           ->where('user_id', $request->auth['user']['user_id'])
+                           ->where('user_id',request()->user_id)
                            ->with('kategori_pengeluaran')
                            ->get();
             
@@ -54,13 +54,13 @@ class PengeluaranController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'user_id' => 'required',
             'tanggal' => 'required',
             'jumlah' => 'required',
             'catatan' => 'nullable',
             'id_kategori_pengeluaran' => 'required',
         ]);
 
+        $data["user_id"] = request()->user_id;
         $pengeluaran = Pengeluaran::create($data);
         return response()->json(['message' => 'Pengeluaran created', 'pengeluaran' => $pengeluaran], 201);
     }
@@ -75,7 +75,6 @@ class PengeluaranController extends Controller
     {
         $pengeluaran = Pengeluaran::findOrFail($id);
         $data = $request->validate([
-            'user_id' => 'required',
             'tanggal' => 'required',
             'jumlah' => 'required',
             'catatan' => 'nullable',

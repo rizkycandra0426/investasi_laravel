@@ -20,15 +20,15 @@ class PortofolioBeliController extends Controller
     public function index(Request $request)
     {
         $data = $request->validate([
-            'user_id' => 'required',
+
         ]);
-        return PortofolioBeli::where('user_id', $data['user_id'])->paginate(10);
+        return PortofolioBeli::where('user_id', request()->user_id)->paginate(10);
     }
 
     public function indexWeb(Request $request) {
         try {
             $portofolioBeli = new PortofolioBeli();
-            $portofolioBeli = PortofolioBeli::where('user_id', $request->auth['user']['user_id'])
+            $portofolioBeli = PortofolioBeli::where('user_id',request()->user_id)
                                 ->with('kategori_pemasukan')
                                 ->get();
             
@@ -58,7 +58,6 @@ class PortofolioBeliController extends Controller
 
     public function store(Request $request) {
         $data = $request->validate([
-            'user_id' => 'required',
             'id_saham' => 'required',
             'tanggal_beli' => 'required',
             'volume_beli' => ' required',
@@ -86,7 +85,7 @@ class PortofolioBeliController extends Controller
         $data['harga_beli'] = $hargasaham;
         
         // Sum all 'saldo' values for the given user_id
-        $saldo = Saldo::where('user_id', $data['user_id'])->sum('saldo');
+        $saldo = Saldo::where('user_id', request()->user_id)->sum('saldo');
         // dd($saldo);
 
 
@@ -98,7 +97,7 @@ class PortofolioBeliController extends Controller
         if ($saldo >= $data['pembelian']) {
             // Deduct pembelian from saldo
             $addsaldo = Saldo::create([
-                'user_id' => $request->auth['user']['user_id'],
+                'user_id' =>request()->user_id,
                 'saldo' => -($data['pembelian'])
             ]);
     
@@ -120,7 +119,6 @@ class PortofolioBeliController extends Controller
     {
         $portofolioBeli = PortofolioBeli::findOrFail($id);
         $data = $request->validate([
-            'user_id' => 'required',
             'id_saham' => 'required',
             'volume_beli' => 'required',
             'tanggal_beli' => 'required',
