@@ -17,9 +17,12 @@ class PortofolioBeliController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return PortofolioBeli::paginate(10);
+        $data = $request->validate([
+            'user_id' => 'required',
+        ]);
+        return PortofolioBeli::where('user_id', $data['user_id'])->paginate(10);
     }
 
     public function indexWeb(Request $request) {
@@ -83,7 +86,7 @@ class PortofolioBeliController extends Controller
         $data['harga_beli'] = $hargasaham;
         
         // Sum all 'saldo' values for the given user_id
-        $saldo = Saldo::where('user_id', $request->auth['user']['user_id'])->sum('saldo');
+        $saldo = Saldo::where('user_id', $data['user_id'])->sum('saldo');
         // dd($saldo);
 
 

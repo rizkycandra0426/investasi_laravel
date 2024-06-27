@@ -19,18 +19,21 @@ class ManajemenPortofolioController extends Controller
     
     public function indexporto(Request $request)
 {
+    $data = $request->validate([
+        'user_id' => 'required',
+    ]);
     // Fetch buy and sell portfolios
     // dd($request->auth['user']['user_id']);
 
-    $portobeli = PortofolioBeli::where('user_id', $request->auth['user']['user_id'])->with('emiten')->get()->toArray();
-    $portojual = PortofolioJual::where('user_id', $request->auth['user']['user_id'])->with('emiten')->get()->toArray();
+    $portobeli = PortofolioBeli::where('user_id', $data['user_id'])->with('emiten')->get()->toArray();
+    $portojual = PortofolioJual::where('user_id', $data['user_id'])->with('emiten')->get()->toArray();
 
     // Initialize variables
     $groupedByEmiten = [];
     $result = [];
 
     // Fetch the initial saldo value and save it in a variable
-    $saldo = Saldo::where('user_id', $request->auth['user']['user_id'])
+    $saldo = Saldo::where('user_id', $data['user_id'])
         ->orderBy('created_at', 'asc')
         ->first();
     // dd($saldo);

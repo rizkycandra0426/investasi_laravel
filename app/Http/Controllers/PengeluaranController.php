@@ -11,9 +11,12 @@ use Exception;
 
 class PengeluaranController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Pengeluaran::paginate(10);
+        $data = $request->validate([
+            'user_id' => 'required',
+        ]);
+        return Pengeluaran::where('user_id', $data['user_id'])->paginate(10);
     }
 
     public function indexWeb(Request $request) {

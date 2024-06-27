@@ -12,9 +12,12 @@ use Exception;
 
 class PemasukanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Pemasukan::paginate(10);
+        $data = $request->validate([
+            'user_id' => 'required',
+        ]);
+        return Pemasukan::where('user_id', $data['user_id'])->paginate(10);
     }
 
     public function indexWeb(Request $request) {

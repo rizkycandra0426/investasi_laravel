@@ -16,9 +16,13 @@ use Illuminate\Support\Facades\Http;
 
 class PortofolioJualController extends Controller
 {
-    public function index()
+    
+    public function index(Request $request)
     {
-        return PortofolioJual::paginate(10);
+        $data = $request->validate([
+            'user_id' => 'required',
+        ]);
+        return PortofolioJual::where('user_id', $data['user_id'])->paginate(10);
     }
 
     public function indexWeb(Request $request) {
@@ -55,9 +59,12 @@ class PortofolioJualController extends Controller
     public function store(Request $request)
     {
         // dd($request->auth['user']['user_id']);
+        $data = $request->validate([
+            'user_id' => 'required',
+        ]);
         
-        $portobeli = PortofolioBeli::where('user_id', $request->auth['user']['user_id'])->with('emiten')->get()->toArray();
-        $portojual = PortofolioJual::where('user_id', $request->auth['user']['user_id'])->with('emiten')->get()->toArray();
+        $portobeli = PortofolioBeli::where('user_id', $data['user_id'])->with('emiten')->get()->toArray();
+        $portojual = PortofolioJual::where('user_id', $data['user_id'])->with('emiten')->get()->toArray();
         // dd($portojual);
     
         // Check if portfolios are not null
@@ -197,7 +204,7 @@ class PortofolioJualController extends Controller
             return response()->json(['error' => 'vol tidak cukup.'], 400);
         }
 
-        $saldo = Saldo::where('user_id', $request->auth['user']['user_id'])->sum('saldo');
+        $saldo = Saldo::where('user_id', $data['user_id'])->sum('saldo');
 
         if (!$saldo) {
             return response()->json(['error' => 'Saldo not found for the user.'], 404);
@@ -212,7 +219,7 @@ class PortofolioJualController extends Controller
             // Save the updated saldo
 
         $addsaldo = Saldo::create([
-            'user_id' => $request->auth['user']['user_id'],
+            'user_id' => $data['user_id'],
             'saldo' => ($jualporto['penjualan'])
         ]);
     
