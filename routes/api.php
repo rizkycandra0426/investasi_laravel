@@ -19,6 +19,7 @@ use App\Http\Controllers\StockAPIController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\ManajemenPortofolioController;
 use App\Http\Controllers\KursController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostBeliController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AdminUserMiddleware;
@@ -98,6 +99,8 @@ use App\Http\Middleware\GuestMiddleware;
 
 
 Route::middleware(ApiMiddleware::class)->group(function () {
+    Route::apiResource('notification', NotificationController::class);
+
     Route::get('/porto', [ManajemenPortofolioController::class, 'indexporto']);
     Route::get('/dividen', [StockAPIController::class, 'indexdividen']);
     Route::get('/berita', [BeritaController::class, 'index']);
@@ -118,8 +121,12 @@ Route::middleware(ApiMiddleware::class)->group(function () {
     Route::post('/category-requests', [CategoryRequestController::class, 'store']); // Simpan Category
     Route::get('/category-requests', [CategoryRequestController::class, 'indexMobile']); // List request categorie
 
+    Route::get('portofoliojual/action/sisa-volume/{id_saham}', [PortofolioJualController::class, 'getSisaVolume']);
+
     Route::apiResource('portofoliobeli', PortofolioBeliController::class);
     Route::apiResource('portofoliojual', PortofolioJualController::class);
+
+
     Route::post('saldo/user', [SaldoController::class, 'saldoUser']);
     Route::apiResource('saldo', SaldoController::class);
     Route::apiResource('sekuritas', SekuritasController::class);

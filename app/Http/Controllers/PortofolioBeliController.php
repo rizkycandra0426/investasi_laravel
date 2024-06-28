@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Http;
 use Exception;
+
 class PortofolioBeliController extends Controller
 {
     /**
@@ -19,19 +20,18 @@ class PortofolioBeliController extends Controller
      */
     public function index(Request $request)
     {
-        $data = $request->validate([
-
-        ]);
+        $data = $request->validate([]);
         return PortofolioBeli::where('user_id', request()->user_id)->paginate(10);
     }
 
-    public function indexWeb(Request $request) {
+    public function indexWeb(Request $request)
+    {
         try {
             $portofolioBeli = new PortofolioBeli();
-            $portofolioBeli = PortofolioBeli::where('user_id',request()->user_id)
-                                ->with('kategori_pemasukan')
-                                ->get();
-            
+            $portofolioBeli = PortofolioBeli::where('user_id', request()->user_id)
+                ->with('kategori_pemasukan')
+                ->get();
+
             return response()->json([
                 'message' => 'Berhasil mendapatkan daftar toko.',
                 'auth' => $request->auth,
@@ -39,15 +39,14 @@ class PortofolioBeliController extends Controller
                     'pemasukan' => $portofolioBeli
                 ],
             ], Response::HTTP_OK);
-
         } catch (Exception $e) {
-            if($e instanceof ValidationException){
+            if ($e instanceof ValidationException) {
                 return response()->json([
                     'message' => $e->getMessage(),
                     'auth' => $request->auth,
                     'errors' =>  $e->validator->errors(),
                 ], Response::HTTP_BAD_REQUEST);
-            }else{
+            } else {
                 return response()->json([
                     'message' => $e->getMessage(),
                     'auth' => $request->auth
@@ -56,20 +55,25 @@ class PortofolioBeliController extends Controller
         }
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $data = $request->validate([
             'id_saham' => 'required',
+            'action' => 'required', // READ | BUY
             'tanggal_beli' => 'required',
             'volume_beli' => ' required',
             'id_sekuritas' => 'nullable',
         ]);
+
+
+        $data['id_sekuritas'] = 1;
 
         $saham = Saham::where('id_saham', '=', $data['id_saham'])->first()->toArray();
         $response = Http::acceptJson()
             ->withHeaders([
                 'X-API-KEY' => config('goapi.apikey')
             ])->withoutVerifying() // Disable SSL verification
-            ->get('https://api.goapi.io/stock/idx/prices?symbols='. $saham['nama_saham'])
+            ->get('https://api.goapi.io/stock/idx/prices?symbols=' . $saham['nama_saham'])
             ->json();
         $hargasaham = $response['data']['results'][0]['close'];
 
@@ -83,7 +87,7 @@ class PortofolioBeliController extends Controller
         $data['harga_total'] = $pembelian;
         $data['pembelian'] = $pembelian + $potongan;
         $data['harga_beli'] = $hargasaham;
-        
+
         // Sum all 'saldo' values for the given user_id
         $saldo = Saldo::where('user_id', request()->user_id)->sum('saldo');
         // dd($saldo);
@@ -92,21 +96,42 @@ class PortofolioBeliController extends Controller
         if (!$saldo) {
             return response()->json(['error' => 'Saldo not found for the user.'], 404);
         }
-    
-        // Check if saldo is sufficient
-        if ($saldo >= $data['pembelian']) {
-            // Deduct pembelian from saldo
-            $addsaldo = Saldo::create([
-                'user_id' =>request()->user_id,
-                'saldo' => -($data['pembelian'])
-            ]);
-    
-        } else {
-            return response()->json(['error' => 'Insufficient saldo.'], 400);
+
+        $saldo = Saldo::where('user_id', request()->user_id)->sum('saldo');
+
+        if ($data['action'] == 'READ') {
+            return response()->json([
+                'message' => 'PortofolioBeli created',
+                'saldo' => $saldo,
+                'pembelian' => $data['pembelian'],
+                'saldo_cukup' => $saldo >= $data['pembelian'],
+            ], 201);
         }
 
-        $portofolioBeli = PortofolioBeli::create($data);
-        return response()->json(['message' => 'PortofolioBeli created', 'portofolioBeli' => $portofolioBeli], 201);
+
+        // Check if saldo is sufficient
+        if ($saldo >= $data['pembelian']) {
+            //if action is BUY
+            Saldo::create([
+                'user_id' => request()->user_id,
+                'saldo' => - ($data['pembelian'])
+            ]);
+
+            $data['user_id'] = request()->user_id;
+            $portofolioBeli = PortofolioBeli::create($data);
+            return response()->json([
+                'message' => 'PortofolioBeli created',
+                'portofolioBeli' => $portofolioBeli,
+                'saldo' => $saldo,
+                'pembelian' => $data['pembelian'],
+            ], 201);
+        } else {
+            return response()->json([
+                'error' => 'Insufficient saldo.',
+                'saldo' => $saldo,
+                'pembelian' => $data['pembelian']
+            ], 400);
+        }
     }
 
     public function show($id)
