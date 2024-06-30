@@ -20,6 +20,7 @@ use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\ManajemenPortofolioController;
 use App\Http\Controllers\KursController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\NotificationSchedulerController;
 use App\Http\Controllers\PostBeliController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AdminUserMiddleware;
@@ -99,9 +100,11 @@ use App\Http\Middleware\GuestMiddleware;
 
 
 Route::get('test-send-email', [AuthenticationController::class, 'testSendEmail']);
+Route::get('/send-notifications', [NotificationSchedulerController::class, 'sendNotificaitons']);
 
 Route::middleware(ApiMiddleware::class)->group(function () {
     Route::apiResource('notification', NotificationController::class);
+    Route::apiResource('notification-scheduler', NotificationSchedulerController::class);
 
     Route::get('/porto', [ManajemenPortofolioController::class, 'indexporto']);
     Route::get('/dividen', [StockAPIController::class, 'indexdividen']);

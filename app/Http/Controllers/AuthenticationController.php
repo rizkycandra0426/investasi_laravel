@@ -23,6 +23,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\AuthenticationException;
 use Exception;
 use Illuminate\Support\Facades\Mail;
+use Ramsey\Uuid\Uuid;
 
 class AuthenticationController extends Controller
 {
@@ -280,13 +281,17 @@ class AuthenticationController extends Controller
             'email' => $request['email'],
             'password' => Hash::make($request['password']),
             'name' => $request['name'],
+            'email_verification_code' => Uuid::uuid4()->toString()
         ]);
 
         // Send email with verification code Mailtrap?
         // Mail::to($user->email)->send(new VerificationMail($user));
         $email = $request['email'];
         $subject = 'Silahkan verifikasi akun anda';
-        $message = "Silahkan verifikasi akun anda dengan klik link berikut: ' . url('/') . '/api/verify/' . $user->email_verification_code . ' Terima kasih.";
+
+        $code =  $user->email_verification_code;
+        $base_url = url("/api/verify/$code");
+        $message = "Klik utk verifikasi: $base_url";
 
         $x = Mail::raw($message, function ($message) use ($email, $subject) {
             $message->to($email)
@@ -331,6 +336,15 @@ class AuthenticationController extends Controller
             $user->email_verified_at = now();
             $user->email_verification_code = null;
             $user->save();
+
+            $email = $user->email;
+            $subject = 'Email kamu sudah terverifikasi';
+            $message = "Selamat email kamu sudah terverifikasi";
+            $x = Mail::raw($message, function ($message) use ($email, $subject) {
+                $message->to($email)
+                    ->subject($subject);
+            });
+
             return response()->json([
                 'error' => 0,
                 'message' => 'Email Verified Successfully',

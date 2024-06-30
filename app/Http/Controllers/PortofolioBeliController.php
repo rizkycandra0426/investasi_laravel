@@ -21,7 +21,16 @@ class PortofolioBeliController extends Controller
     public function index(Request $request)
     {
         $data = $request->validate([]);
-        return PortofolioBeli::where('user_id', request()->user_id)->paginate(10);
+
+        $emiten = $request->query('emiten');
+        $query = PortofolioBeli::where('user_id', request()->user_id);
+
+        if ($emiten) {
+            $idSaham = Saham::where('nama_saham', $emiten)->value('id_saham');
+            $query->where('id_saham', $idSaham);
+        }
+
+        return $query->orderBy("tanggal_beli", "desc")->paginate(10);
     }
 
     public function indexWeb(Request $request)

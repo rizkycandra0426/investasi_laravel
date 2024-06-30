@@ -19,8 +19,15 @@ class PortofolioJualController extends Controller
 
     public function index(Request $request)
     {
-        $data = $request->validate([]);
-        return PortofolioJual::where('user_id', request()->user_id)->paginate(10);
+        $emiten = $request->query('emiten');
+        $query = PortofolioJual::where('user_id', request()->user_id);
+
+        if ($emiten) {
+            $idSaham = Saham::where('nama_saham', $emiten)->value('id_saham');
+            $query->where('id_saham', $idSaham);
+        }
+
+        return $query->orderBy("tanggal_jual", "desc")->paginate(10);
     }
 
     public function indexWeb(Request $request)
@@ -206,7 +213,7 @@ class PortofolioJualController extends Controller
         // dd($jualporto['volume_jual'], $voltotal);
         $penjualan = $jualporto['volume_jual'] * 100 * $hargasaham;
         if ($jualporto['volume_jual'] <= $voltotal) {
-   
+
             if ($penjualan <= $equity) {
 
                 $fee = ceil($penjualan *  $sekuritas['fee'] / 100);

@@ -13,8 +13,15 @@ class StockAPIController extends Controller
 {
     public function index()
     {
-        $searchQuery = request()->input('search');
-        return Saham::where('nama_saham', 'like', '%' . $searchQuery . '%')->paginate(10);
+        $emiten = request()->query('emiten');
+        if ($emiten) {
+            return response()->json([
+                "data" => Saham::where('nama_saham', $emiten)->get()
+            ]);
+        } else {
+            $searchQuery = request()->input('search');
+            return Saham::where('nama_saham', 'like', '%' . $searchQuery . '%')->paginate(10);
+        }
     }
 
     public function indexStock()
@@ -81,7 +88,11 @@ class StockAPIController extends Controller
         // Format the percentage to 2 decimal places and append "%"
         $yield_percentage_formatted = number_format($yield_percentage, 2) . '%';
 
-        return response()->json($yield_percentage_formatted);
+        return response()->json([
+            "data" => [
+                "ihsg" => $yield_percentage_formatted
+            ]
+        ]);
     }
 
 
