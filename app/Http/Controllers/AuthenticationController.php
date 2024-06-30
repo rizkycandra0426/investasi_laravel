@@ -306,7 +306,7 @@ class AuthenticationController extends Controller
     public function testSendEmail()
     {
         //send plain text email to "coba@mailinator.com"?
-        $email = 'denyocr.world@gmail.com';
+        $email = 'testing@mailinator.com';
         $subject = 'Silahkan verifikasi akun anda';
         $message = "Silahkan verifikasi akun anda dengan klik link berikut: ' . url('/') . '/api/verify/testing Terima kasih.";
 

@@ -98,6 +98,8 @@ use App\Http\Middleware\GuestMiddleware;
 // });
 
 
+Route::get('test-send-email', [AuthenticationController::class, 'testSendEmail']);
+
 Route::middleware(ApiMiddleware::class)->group(function () {
     Route::apiResource('notification', NotificationController::class);
 
@@ -139,7 +141,6 @@ Route::middleware(ApiMiddleware::class)->group(function () {
 
     Route::post('login', [AuthenticationController::class, 'login']);
     Route::post('register', [AuthenticationController::class, 'register']);
-    Route::get('test-send-email', [AuthenticationController::class, 'testSendEmail']);
     Route::get('verify/{code}', [AuthenticationController::class, 'verify']);
     Route::post('logout', [AuthenticationController::class, 'logout']);
 
