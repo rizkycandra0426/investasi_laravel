@@ -16,7 +16,7 @@ use App\Http\Controllers\StockAPIController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return "Server ok";
 });
 
 Route::get('/updatestock', [StockAPIController::class, 'updateStock']);
