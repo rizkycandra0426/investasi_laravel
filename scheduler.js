@@ -1,7 +1,15 @@
 // node .\scheduler.js
 
-fetch('http://localhost:8000/api/send-notifications');
+fetch('https://investasi.9code.id//api/send-notifications');
+console.log("Scheduler is running...");
 setInterval(() => {
-    fetch('http://localhost:8000/api/send-notifications');
+console.log("Scheduler is executed..");
+    fetch('https://investasi.9code.id//api/send-notifications');
 // }, 5000);
 }, 60000);
+
+
+
+setInterval(() => {
+   console.log("Scheduler is running...");
+}, 5000);
