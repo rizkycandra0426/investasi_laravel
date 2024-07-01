@@ -215,7 +215,6 @@ class PortofolioJualController extends Controller
         if ($jualporto['volume_jual'] <= $voltotal) {
 
             if ($penjualan <= $equity) {
-
                 $fee = ceil($penjualan *  $sekuritas['fee'] / 100);
                 $jualporto['penjualan'] = $penjualan - $fee;
                 $jualporto['harga_total'] = $penjualan;
