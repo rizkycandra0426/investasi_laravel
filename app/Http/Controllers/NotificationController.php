@@ -39,7 +39,6 @@ class NotificationController extends Controller
         $user_id = request()->user_id;
         $user = User::find($user_id);
 
-
         $title = request()->title;
         $body = request()->body;
 
