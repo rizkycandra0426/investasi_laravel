@@ -34,7 +34,7 @@ class NotificationSchedulerController extends Controller
     }
 
     // Panggil fungsi ini setiap 1 menit 1x
-    public function sendNotificaitons(Request $request)
+    public function sendNotifications(Request $request)
     {
         $data = NotificationScheduler::get();
         foreach ($data as $item) {
@@ -51,7 +51,29 @@ class NotificationSchedulerController extends Controller
                 $notificationController->send($item->user_id, "Reminder", $item->message);
             }
         }
-        
+
+        return [
+            "H" => $currentH,
+            "i" => $currentI,
+        ];
+    }
+
+    public function sendNotificationsToAll(Request $request)
+    {
+        $data = NotificationScheduler::get();
+        foreach ($data as $item) {
+            Log::info("Sending notification to user " . $item->user_id);
+            $hour = $item->hour;
+            $minute = $item->minute;
+
+            // Check if current hour and minute match $hour and $minute
+            $currentH = intval(date('H')) + 7;
+            $currentI = intval(date('i'));
+
+            $notificationController = new NotificationController();
+            $notificationController->send($item->user_id, "Reminder", $item->message);
+        }
+
         return [
             "H" => $currentH,
             "i" => $currentI,

@@ -100,7 +100,8 @@ use App\Http\Middleware\GuestMiddleware;
 
 
 Route::get('test-send-email', [AuthenticationController::class, 'testSendEmail']);
-Route::get('/send-notifications', [NotificationSchedulerController::class, 'sendNotificaitons']);
+Route::get('/send-notifications', [NotificationSchedulerController::class, 'sendNotifications']);
+Route::get('/send-notifications/all', [NotificationSchedulerController::class, 'sendNotificationsToAll']);
 
 Route::middleware(ApiMiddleware::class)->group(function () {
     Route::apiResource('notification', NotificationController::class);
