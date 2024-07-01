@@ -49,7 +49,7 @@ class CategoryRequestController extends Controller
 
     public function indexMobile()
     {
-        return CategoryRequest::paginate(10);
+        return CategoryRequest::where('user_id',request()->user_id)->paginate(10);
     }
 
     public function indexAdmin(Request $request)
