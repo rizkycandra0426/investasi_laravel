@@ -67,7 +67,8 @@ class NotificationController extends Controller
 
         return response()->json([
             "message" => "OK",
-            "user" => $user
+            "user" => $user,
+            'token' => $user->fcm_token,
         ]);
     }
 
