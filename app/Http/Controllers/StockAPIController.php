@@ -147,7 +147,7 @@ class StockAPIController extends Controller
 
     public function indexdividen()
     {
-        return Dividen::paginate(10);
+        return Dividen::paginate(30);
     }
 
     public function historical_30hari($symbol)
