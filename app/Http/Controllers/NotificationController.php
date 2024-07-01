@@ -38,6 +38,12 @@ class NotificationController extends Controller
 
         $user_id = request()->user_id;
         $user = User::find($user_id);
+        if ($user == null) {
+            return response()->json([
+                "message" => "User tidak ditemukan",
+                "user" => $user
+            ]);
+        }
 
         $title = request()->title;
         $body = request()->body;
