@@ -1,7 +1,9 @@
 // node .\scheduler.js
 
-fetch('http://localhost:8000/api/send-notifications');
+// var baseUrl = `http://localhost:8000/api`;
+var baseUrl = `https://investasi.9code.id/api`;
+fetch(`${baseUrl}/send-notifications`);
 setInterval(() => {
-    fetch('http://localhost:8000/api/send-notifications');
+    fetch(`${baseUrl}/send-notifications`);
 // }, 5000);
 }, 60000);

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class NotificationSchedulerController extends Controller
 {
+    public $gmt = 8;
     public function index()
     {
         return  NotificationScheduler::where("user_id", request()->user_id)->paginate();
@@ -67,7 +68,7 @@ class NotificationSchedulerController extends Controller
             $minute = $item->minute;
 
             // Check if current hour and minute match $hour and $minute
-            $currentH = intval(date('H')) + 7;
+            $currentH = intval(date('H')) + $this->gmt;
             $currentI = intval(date('i'));
 
             $notificationController = new NotificationController();
