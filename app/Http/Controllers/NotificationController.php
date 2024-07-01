@@ -42,6 +42,13 @@ class NotificationController extends Controller
         $title = request()->title;
         $body = request()->body;
 
+        if ($user->fcm_token == null) {
+            return response()->json([
+                "message" => "User ini belum memiliki fcm_token",
+                "user" => $user
+            ]);
+        }
+
         $message = CloudMessage::fromArray([
             'token' => $user->fcm_token,
             'notification' => [
