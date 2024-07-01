@@ -13,7 +13,7 @@ class NotificationController extends Controller
     public function send($user_id, $title, $body)
     {
         $firebase = (new Factory)
-            ->withServiceAccount(__DIR__ . '/../../../service-account.json');
+            ->withServiceAccount(base_path('service-account.json'));
 
         $messaging = $firebase->createMessaging();
         $user = User::find($user_id);
@@ -32,7 +32,7 @@ class NotificationController extends Controller
     public function index(Request $request)
     {
         $firebase = (new Factory)
-            ->withServiceAccount(__DIR__ . '/../../../service-account.json');
+            ->withServiceAccount(base_path('service-account.json'));
 
         $messaging = $firebase->createMessaging();
 
