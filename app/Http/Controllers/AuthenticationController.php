@@ -232,7 +232,10 @@ class AuthenticationController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if ($user->email_verified_at == null) {
-            return $this->responseError(null, 'Email belum terverifikasi!', Response::HTTP_UNAUTHORIZED);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Email belum terverifikasi!',
+            ], 401);
         }
 
         $data = [
