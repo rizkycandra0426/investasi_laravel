@@ -22,4 +22,3 @@ Homestead.json
 /.vagrant
 .phpunit.result.cache
 .vscode/settings.json
-service-account.json
