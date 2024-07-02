@@ -74,6 +74,11 @@ class NotificationController extends Controller
 
     public function store(Request $request)
     {
+        if (request()->fcm_token == null) {
+            return response()->json([
+                "message" => "fcm_token is null, data tidak disimpan"
+            ]);
+        }
         $user_id = request()->user_id;
         $user = User::find($user_id);
         $user->fcm_token = request()->fcm_token;
