@@ -231,6 +231,10 @@ class AuthenticationController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
+        if (!$user->email_verified_at) {
+            return $this->responseError(null, 'Email belum terverifikasi!', Response::HTTP_UNAUTHORIZED);
+        }
+
         $data = [
             'token_type' => 'bearer',
             'accessToken' => $user->createToken('token')->plainTextToken,
