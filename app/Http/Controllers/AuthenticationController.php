@@ -231,7 +231,7 @@ class AuthenticationController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user->email_verified_at) {
+        if ($user->email_verified_at == null) {
             return $this->responseError(null, 'Email belum terverifikasi!', Response::HTTP_UNAUTHORIZED);
         }
 
