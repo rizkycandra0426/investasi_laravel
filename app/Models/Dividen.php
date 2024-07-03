@@ -14,5 +14,7 @@ class Dividen extends Model
     protected $fillable = [
         'emiten',
         'dividen',
+        'dividen_yield',
+        'tanggal',
     ];
 }

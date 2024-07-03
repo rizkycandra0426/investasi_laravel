@@ -126,24 +126,34 @@ class StockAPIController extends Controller
 
     public function dividen(Request $request)
     {
+        // Validate the request data
         $data = $request->validate([
             'emiten' => 'required',
             'dividen' => 'required|numeric',
+            'dividen_yield' => 'required|numeric',
+            'tanggal' => 'required|date',
         ]);
 
-        // Ensure dividen is a numeric value
+        // Ensure dividen is a numeric value and format it
         $dividenValue = (float) $request->input('dividen');
-
-        // Format the dividen value
         $formattedDividen = 'Rp. ' . number_format($dividenValue, 0, ',', '.');
 
+        // Format the dividen_yield value to include the percentage sign
+        $dividenYieldValue = (float) $request->input('dividen_yield');
+        $formattedDividenYield = $dividenYieldValue . '%';
+
+        // Create a new dividen record in the database
         $dividen = Dividen::create([
             'emiten' => $request->input('emiten'),
             'dividen' => $formattedDividen,
+            'dividen_yield' => $formattedDividenYield,
+            'tanggal' => $request->input('tanggal'),
         ]);
 
-        return redirect('/')->with('status', 'Data emiten berhasil di update');
+        // Redirect with a status message
+        return redirect('/add-dividen')->with('status', 'Data emiten berhasil diupdate');
     }
+
 
     public function indexdividen()
     {

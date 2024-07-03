@@ -46,6 +46,8 @@
 					        @csrf   
                             <input type="text" id="emiten" name="emiten" placeholder="emiten">
                             <input type="text" id="dividen" name="dividen" placeholder="dividen">
+                            <input type="text" id="dividen_yield" name="dividen_yield" placeholder="dividen_yield">
+                            <input type="date" id="tanggal" name="tanggal">
                             <button type="submit" class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Submit</button>
                         </form>
                     </div>
