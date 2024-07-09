@@ -19,13 +19,49 @@ class SaldoController extends Controller
         return Saldo::where("user_id", request()->user_id)->paginate(10);
     }
 
-    public function indexWeb(Request $request) {
+    public function saldoMasukHistory()
+    {
+        $saldo = Saldo::where('user_id', request()->user_id)
+            ->selectRaw('MONTH(created_at) as bulan, SUM(saldo) as saldo')
+            ->whereYear('created_at', now()->year)
+            ->where('saldo', '>', 0)
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->get();
+
+        // Generate an array with all months from 1 to 12
+        $months = range(1, 12);
+
+        // Initialize an empty array to store the final result
+        $result = [];
+
+        // Loop through the months array
+        foreach ($months as $month) {
+            // Check if the current month exists in the saldo collection
+            $saldoData = $saldo->where('bulan', $month)->first();
+
+            // If the saldo data for the current month exists, add it to the result array
+            // Otherwise, add a default saldo value of 0
+            $result[] = [
+                'bulan' => date('F', mktime(0, 0, 0, $month, 1)),
+                'saldo' => $saldoData ? $saldoData->saldo : 0
+            ];
+        }
+
+        return response()->json([
+            'message' => 'Berhasil mendapatkan daftar saldo masuk.',
+            'data' => $result,
+        ], Response::HTTP_OK);
+    }
+
+    public function indexWeb(Request $request)
+    {
         try {
             $saldo = new Saldo();
-            $saldo = Saldo::where('user_id',request()->user_id)
-                                ->with('kategori_pemasukan')
-                                ->get();
-            
+            $saldo = Saldo::where('user_id', request()->user_id)
+                ->with('kategori_pemasukan')
+                ->get();
+
             return response()->json([
                 'message' => 'Berhasil mendapatkan daftar toko.',
                 'auth' => $request->auth,
@@ -33,15 +69,14 @@ class SaldoController extends Controller
                     'pemasukan' => $saldo
                 ],
             ], Response::HTTP_OK);
-
         } catch (Exception $e) {
-            if($e instanceof ValidationException){
+            if ($e instanceof ValidationException) {
                 return response()->json([
                     'message' => $e->getMessage(),
                     'auth' => $request->auth,
                     'errors' =>  $e->validator->errors(),
                 ], Response::HTTP_BAD_REQUEST);
-            }else{
+            } else {
                 return response()->json([
                     'message' => $e->getMessage(),
                     'auth' => $request->auth
@@ -63,9 +98,7 @@ class SaldoController extends Controller
 
     public function saldoUser(Request $request)
     {
-        $data = $request->validate([
-
-        ]);
+        $data = $request->validate([]);
 
         $saldo = Saldo::where('user_id', request()->user_id)->sum('saldo');
         return response()->json([

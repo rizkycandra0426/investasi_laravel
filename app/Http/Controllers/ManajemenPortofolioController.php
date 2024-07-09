@@ -23,8 +23,21 @@ class ManajemenPortofolioController extends Controller
     {
         // dd($request->auth['user']['user_id']);
 
-        $portobeli = PortofolioBeli::where('user_id', request()->user_id)->with('emiten')->get()->toArray();
-        $portojual = PortofolioJual::where('user_id', request()->user_id)->with('emiten')->get()->toArray();
+        $portobeli = PortofolioBeli::where('user_id', request()->user_id)
+            ->when(request()->has('year'), function ($query) {
+                return $query->whereYear('tanggal_beli', request()->year);
+            })
+            ->with('emiten')
+            ->get()
+            ->toArray();
+
+        $portojual = PortofolioJual::where('user_id', request()->user_id)
+            ->when(request()->has('year'), function ($query) {
+                return $query->whereYear('tanggal_jual', request()->year);
+            })
+            ->with('emiten')
+            ->get()
+            ->toArray();
 
         $groupedByEmiten = [];
         $result = [];

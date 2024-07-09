@@ -138,6 +138,8 @@ Route::middleware(ApiMiddleware::class)->group(function () {
 
 
     Route::post('saldo/user', [SaldoController::class, 'saldoUser']);
+    Route::get('saldo/saldo-masuk-history', [SaldoController::class, 'saldoMasukHistory']);
+
     Route::apiResource('saldo', SaldoController::class);
     Route::apiResource('sekuritas', SekuritasController::class);
 
