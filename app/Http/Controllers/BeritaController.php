@@ -15,7 +15,7 @@ class BeritaController extends Controller
     {
         $response = Http::acceptJson()
             ->withHeaders([
-                'X-API-KEY' => config('goapi.apikey')
+                'X-API-KEY' => GoApiController::getApiKey()
             ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/news?page=5')->json();
 
         $data = $response['data']['results'];

@@ -28,7 +28,7 @@ class StockAPIController extends Controller
     {
         $response = Http::acceptJson()
             ->withHeaders([
-                'X-API-KEY' => config('goapi.apikey')
+                'X-API-KEY' => GoApiController::getApiKey()
             ])->withoutVerifying() // Disable SSL verification
             ->get('https://api.goapi.io/stock/idx/companies')
             ->json();
@@ -49,7 +49,7 @@ class StockAPIController extends Controller
     {
         $response = Http::acceptJson()
             ->withHeaders([
-                'X-API-KEY' => config('goapi.apikey')
+                'X-API-KEY' => GoApiController::getApiKey()
             ])->withoutVerifying() // Disable SSL verification
             ->get('https://api.goapi.io/stock/idx/prices?symbols=' . $emiten)
             ->json();
@@ -63,7 +63,7 @@ class StockAPIController extends Controller
     {
         $response = Http::acceptJson()
             ->withHeaders([
-                'X-API-KEY' => config('goapi.apikey')
+                'X-API-KEY' => GoApiController::getApiKey()
             ])->withoutVerifying() // Disable SSL verification
             ->get('https://api.goapi.io/stock/idx/indices?symbols=COMPOSITE')
             ->json();
@@ -103,7 +103,7 @@ class StockAPIController extends Controller
     {
         $response = Http::acceptJson()
             ->withHeaders([
-                'X-API-KEY' => config('goapi.apikey')
+                'X-API-KEY' => GoApiController::getApiKey()
             ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/companies')->json();
 
         $data = $response['data']['results'];
@@ -167,7 +167,7 @@ class StockAPIController extends Controller
         $start = Carbon::now()->subDays(30)->format('Y-m-d');
         $response = Http::acceptJson()
             ->withHeaders([
-                'X-API-KEY' => config('goapi.apikey')
+                'X-API-KEY' => GoApiController::getApiKey()
             ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/' . $symbol . '/historical?from=' . $start . '&to=' . $end)->json();
 
         return response()->json([
@@ -182,7 +182,7 @@ class StockAPIController extends Controller
         $start = Carbon::now()->subDays(60)->format('Y-m-d');
         $response = Http::acceptJson()
             ->withHeaders([
-                'X-API-KEY' => config('goapi.apikey')
+                'X-API-KEY' => GoApiController::getApiKey()
             ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/' . $symbol . '/historical?from=' . $start . '&to=' . $end)->json();
 
         return response()->json([
@@ -197,7 +197,7 @@ class StockAPIController extends Controller
         $start = Carbon::now()->subDays(90)->format('Y-m-d');
         $response = Http::acceptJson()
             ->withHeaders([
-                'X-API-KEY' => config('goapi.apikey')
+                'X-API-KEY' => GoApiController::getApiKey()
             ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/' . $symbol . '/historical?from=' . $start . '&to=' . $end)->json();
 
         return response()->json([
@@ -212,7 +212,7 @@ class StockAPIController extends Controller
         $start = Carbon::now()->subDays(360)->format('Y-m-d');
         $response = Http::acceptJson()
             ->withHeaders([
-                'X-API-KEY' => config('goapi.apikey')
+                'X-API-KEY' => GoApiController::getApiKey()
             ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/' . $symbol . '/historical?from=' . $start . '&to=' . $end)->json();
 
         return response()->json([

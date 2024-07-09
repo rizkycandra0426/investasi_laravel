@@ -7,6 +7,8 @@ use App\Models\Saham;
 use App\Models\Saldo;
 use App\Models\PortofolioJual;
 use App\Http\Controllers\Controller;
+use App\Models\ManajemenPorto;
+use App\Models\Portofolio;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
@@ -89,7 +91,7 @@ class ManajemenPortofolioController extends Controller
 
             $response = Http::acceptJson()
                 ->withHeaders([
-                    'X-API-KEY' => config('goapi.apikey')
+                    'X-API-KEY' => GoApiController::getApiKey()
                 ])->withoutVerifying() // Disable SSL verification
                 ->get('https://api.goapi.io/stock/idx/prices?symbols=' . $data['nama_saham'])
                 ->json();
@@ -108,8 +110,8 @@ class ManajemenPortofolioController extends Controller
                 'tanggal' => $data['tanggal'],
                 'equity' => $data['equity'],
                 'return' => $data['return'],
-                'buy_count' => $data['buy_count'], 
-                'sell_count' => $data['sell_count'] 
+                'buy_count' => $data['buy_count'],
+                'sell_count' => $data['sell_count']
             ];
         }
 
@@ -146,13 +148,11 @@ class ManajemenPortofolioController extends Controller
             'yield_ihsg' => $yield_ihsg
         ];
 
-        Porto::updateOrCreate(
-            ['user_id' => $request->user()->id],
-            $porto
-        );
+        // ManajemenPorto::updateOrCreate(
+        //     ['user_id' => request()->user_id],
+        //     $porto
+        // );
 
         return response()->json(['result' => $result, 'porto' => $porto]);
     }
-    
-
 }

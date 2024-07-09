@@ -80,7 +80,7 @@ class PortofolioBeliController extends Controller
         $saham = Saham::where('id_saham', '=', $data['id_saham'])->first()->toArray();
         $response = Http::acceptJson()
             ->withHeaders([
-                'X-API-KEY' => config('goapi.apikey')
+                'X-API-KEY' => GoApiController::getApiKey()
             ])->withoutVerifying() // Disable SSL verification
             ->get('https://api.goapi.io/stock/idx/prices?symbols=' . $saham['nama_saham'])
             ->json();

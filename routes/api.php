@@ -17,6 +17,7 @@ use App\Http\Controllers\TagihanController;
 use App\Http\Controllers\SekuritasController;
 use App\Http\Controllers\StockAPIController;
 use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\GoApiController;
 use App\Http\Controllers\ManajemenPortofolioController;
 use App\Http\Controllers\KursController;
 use App\Http\Controllers\NotificationController;
@@ -99,6 +100,9 @@ use App\Http\Middleware\GuestMiddleware;
 // });
 
 
+Route::get('test-goapi', function(){
+    return GoApiController::getApiKey();
+});
 Route::get('test-send-email', [AuthenticationController::class, 'testSendEmail']);
 Route::get('/send-notifications', [NotificationSchedulerController::class, 'sendNotifications']);
 Route::get('/send-notifications/all', [NotificationSchedulerController::class, 'sendNotificationsToAll']);

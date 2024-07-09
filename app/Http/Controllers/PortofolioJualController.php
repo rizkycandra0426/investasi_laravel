@@ -157,7 +157,7 @@ class PortofolioJualController extends Controller
 
             $response = Http::acceptJson()
                 ->withHeaders([
-                    'X-API-KEY' => config('goapi.apikey')
+                    'X-API-KEY' => GoApiController::getApiKey()
                 ])->withoutVerifying() // Disable SSL verification
                 ->get('https://api.goapi.io/stock/idx/prices?symbols=' . $data['nama_saham'])
                 ->json();
