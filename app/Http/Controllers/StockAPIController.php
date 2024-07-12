@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\Saham;
 use App\Models\Dividen;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class StockAPIController extends Controller
 {
@@ -70,7 +71,13 @@ class StockAPIController extends Controller
 
         $ihsg = 7350;
 
-        // Filter the results to include only the specific symbol "COMPOSITE"
+        if ($response['status'] == 'error') {
+            $message = $response['message'];
+            return response()->json(['error' => $message], 401);
+        }
+
+        Log::info("DATA: " . json_encode($response));
+
         $filteredResults = array_filter($response['data']['results'], function ($result) {
             return $result['symbol'] === 'COMPOSITE';
         });

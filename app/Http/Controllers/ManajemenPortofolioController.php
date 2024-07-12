@@ -108,6 +108,7 @@ class ManajemenPortofolioController extends Controller
                 ])->withoutVerifying() // Disable SSL verification
                 ->get('https://api.goapi.io/stock/idx/prices?symbols=' . $data['nama_saham'])
                 ->json();
+
             $hargasaham = $response['data']['results'][0]['close'];
             $hargaclose = $vol_total * 100 * $hargasaham;
             $data['return'] = $hargaclose - $data['equity'];

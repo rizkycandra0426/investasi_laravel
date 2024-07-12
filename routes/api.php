@@ -18,6 +18,7 @@ use App\Http\Controllers\SekuritasController;
 use App\Http\Controllers\StockAPIController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\GoApiController;
+use App\Http\Controllers\HistoriTahunanController;
 use App\Http\Controllers\ManajemenPortofolioController;
 use App\Http\Controllers\KursController;
 use App\Http\Controllers\NotificationController;
@@ -108,6 +109,7 @@ Route::get('/send-notifications', [NotificationSchedulerController::class, 'send
 Route::get('/send-notifications/all', [NotificationSchedulerController::class, 'sendNotificationsToAll']);
 
 Route::middleware(ApiMiddleware::class)->group(function () {
+    Route::apiResource('histori-tahunan', HistoriTahunanController::class);
     Route::apiResource('notification', NotificationController::class);
     Route::apiResource('notification-scheduler', NotificationSchedulerController::class);
 
