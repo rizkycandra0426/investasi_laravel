@@ -176,9 +176,6 @@ class ManajemenPortofolioController extends Controller
         $ihsg_end = 0;
         $yield_ihsg = $ihsg_start > 0 ? ($ihsg_end - $ihsg_start) / $ihsg_start : 0;
 
-
-
-
         //#########################
         $harga_per_unit_yang_diinvestasikan = $total_saat_ini / ($total_beli / 1000);
         $jumlah_per_unit_yang_diinvestasikan = $total_saat_ini / 1000;
