@@ -177,8 +177,8 @@ class ManajemenPortofolioController extends Controller
         $yield_ihsg = $ihsg_start > 0 ? ($ihsg_end - $ihsg_start) / $ihsg_start : 0;
 
         //#########################
-        $harga_per_unit_yang_diinvestasikan = $total_saat_ini / ($total_beli / 1000);
-        $jumlah_per_unit_yang_diinvestasikan = $total_saat_ini / 1000;
+        $harga_per_unit_yang_diinvestasikan = $sum_total_saat_ini / ($sum_total_beli / 1000);
+        $jumlah_per_unit_yang_diinvestasikan = $sum_total_saat_ini / 1000;
 
         $sumSaldo = Saldo::where('user_id', request()->user_id)->sum('saldo');
         $sisaSaldo = $sumSaldo - $sum_total_beli;
