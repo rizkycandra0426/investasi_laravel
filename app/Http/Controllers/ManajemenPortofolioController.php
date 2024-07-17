@@ -15,6 +15,7 @@ use Illuminate\Validation\ValidationException;
 use Exception;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ManajemenPortofolioController extends Controller
 {
@@ -53,6 +54,7 @@ class ManajemenPortofolioController extends Controller
             if (!isset($groupedByEmiten[$emitenId])) {
                 $groupedByEmiten[$emitenId] = [
                     'nama_saham' => $item['emiten'][0]['nama_saham'],
+                    'harga_beli' => $item['harga_beli'],
                     'vol_beli' => 0,
                     'vol_jual' => 0,
                     'avg_beli' => 0,
@@ -97,6 +99,9 @@ class ManajemenPortofolioController extends Controller
             }
         }
 
+        $sum_total_beli = 0;
+        $sum_total_saat_ini = 0;
+
         foreach ($groupedByEmiten as &$data) {
             $vol_total = max($data['vol_beli'] - $data['vol_jual'], 0); // Ensure vol_total is not negative
             $data['avg_beli'] = $data['buy_count'] > 0 ? ceil($data['vol_beli'] / $data['buy_count']) : 0; // Calculate avg_beli
@@ -113,8 +118,23 @@ class ManajemenPortofolioController extends Controller
             $hargaclose = $vol_total * 100 * $hargasaham;
             $data['return'] = $hargaclose - $data['equity'];
 
+
+            $vol_total = $data['vol_beli'] - $data['vol_jual'];
+            $total_beli = ($data['harga_beli']  * ($vol_total * 100));
+            $total_saat_ini = ($hargasaham  * ($vol_total * 100));
+
+            $sum_total_beli += $total_beli;
+            $sum_total_saat_ini += $total_saat_ini;
+
+            $floating_return2 = ($total_saat_ini - $total_beli);
+            $equity2 = $total_beli;
+
             $result[] = [
                 'close' => $hargasaham,
+                'harga_beli' => $data['harga_beli'],
+                'harga_saat_ini' => $hargasaham,
+                'total_beli' => $total_beli,
+                'total_saat_ini' => $total_saat_ini,
                 'emiten' => $data['nama_saham'],
                 'vol_beli' => $data['vol_beli'],
                 'vol_jual' => $data['vol_jual'],
@@ -122,8 +142,10 @@ class ManajemenPortofolioController extends Controller
                 'avg_beli' => $data['avg_beli'],
                 'avg_jual' => $data['avg_jual'],
                 'tanggal' => $data['tanggal'],
-                'equity' => $data['equity'],
-                'return' => $data['return'],
+                // 'equity' => $data['equity'],
+                'equity' => $equity2,
+                // 'return' => $data['return'],
+                'return' => $floating_return2,
                 'buy_count' => $data['buy_count'],
                 'sell_count' => $data['sell_count']
             ];
@@ -133,12 +155,16 @@ class ManajemenPortofolioController extends Controller
         $jumlah_unit_awal = $valuasi_awal / $harga_unit_awal;
 
         $valuasi_saat_ini = 0;
+        $index = 0;
         foreach ($result as $item) {
             if ($item['vol_total'] > 0) {
                 $valuasi_saat_ini = $valuasi_saat_ini + $item['equity'];
                 $valuasi_saat_ini = $valuasi_awal - $valuasi_saat_ini + $item['equity'] + $item['return'];
             }
+            // $result[$index]["valuasi_saat_ini"] = $valuasi_saat_ini;
+            $index++;
         }
+
 
         $jumlah_unit_penyertaan = $jumlah_unit_awal;
         $harga_unit = $jumlah_unit_penyertaan > 0 ? round($valuasi_saat_ini / $jumlah_unit_penyertaan) : 0;
@@ -149,13 +175,33 @@ class ManajemenPortofolioController extends Controller
         $ihsg_end = 0;
         $yield_ihsg = $ihsg_start > 0 ? ($ihsg_end - $ihsg_start) / $ihsg_start : 0;
 
+
+
+
+        //#########################
+        $harga_per_unit_yang_diinvestasikan = $total_saat_ini / ($total_beli / 1000);
+        $jumlah_per_unit_yang_diinvestasikan = $total_saat_ini / 1000;
+
+        $sumSaldo = Saldo::where('user_id', request()->user_id)->sum('saldo');
+        $sisaSaldo = $sumSaldo - $sum_total_beli;
+        $jumlah_per_unit_sisa_saldo = $sisaSaldo / 1000;
+        $harga_per_unit_sisa_saldo = 1000;
+
+        $total_jumlah_per_unit = $jumlah_per_unit_yang_diinvestasikan + $jumlah_per_unit_sisa_saldo;
+        $total_harga_per_unit = $harga_per_unit_yang_diinvestasikan + $harga_per_unit_sisa_saldo;
+
+        $yield_percentage = ($harga_per_unit_yang_diinvestasikan  - $harga_per_unit_sisa_saldo) / $harga_per_unit_sisa_saldo;
+        //#########################
+
         $porto = [
             'valuasi_awal' => $valuasi_awal,
             'harga_unit_awal' => $harga_unit_awal,
             'jumlah_unit_awal' => $jumlah_unit_awal,
             'valuasi_saat_ini' => $valuasi_saat_ini,
-            'jumlah_unit_penyertaan' => $jumlah_unit_penyertaan,
-            'harga_unit' => $harga_unit,
+            //##########3
+            'jumlah_unit_penyertaan' => $total_jumlah_per_unit,
+            'harga_unit' => $total_harga_per_unit,
+            //##########3
             'yield' => $yield_percentage,
             'ihsg_start' => $ihsg_start,
             'ihsg_end' => $ihsg_end,
@@ -166,6 +212,18 @@ class ManajemenPortofolioController extends Controller
         //     ['user_id' => request()->user_id],
         //     $porto
         // );
+
+
+        Log::info("RESULT");
+        Log::info(json_encode($result));
+        Log::info("----");
+        Log::info("PORTO");
+        Log::info(json_encode($porto));
+        Log::info("----");
+
+        // Save $porto to porto.json in public directory
+        file_put_contents(public_path('porto.json'), json_encode($porto));
+        file_put_contents(public_path('result.json'), json_encode($result));
 
         return response()->json(['result' => $result, 'porto' => $porto]);
     }
