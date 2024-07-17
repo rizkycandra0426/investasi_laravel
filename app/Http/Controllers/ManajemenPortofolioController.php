@@ -70,6 +70,7 @@ class ManajemenPortofolioController extends Controller
             $groupedByEmiten[$emitenId]['equity'] += isset($item['harga_total']) ? (float)$item['harga_total'] : 0; // Add to equity
             $groupedByEmiten[$emitenId]['buy_count']++; // Increment buy transaction count
         }
+        //ok
 
         foreach ($portojual as $item) {
             $emitenId = $item['emiten'][0]['id_saham'];
