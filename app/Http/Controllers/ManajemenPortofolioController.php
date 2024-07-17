@@ -192,8 +192,13 @@ class ManajemenPortofolioController extends Controller
 
         $total_jumlah_per_unit = $jumlah_per_unit_yang_diinvestasikan + $jumlah_per_unit_sisa_saldo;
         $total_harga_per_unit = $harga_per_unit_yang_diinvestasikan + $harga_per_unit_sisa_saldo;
-
         $yield_percentage = ($harga_per_unit_yang_diinvestasikan  - $harga_per_unit_sisa_saldo) / $harga_per_unit_sisa_saldo;
+
+        if ($sum_total_beli == 0) {
+            $yield_percentage = 0;
+            $total_harga_per_unit = 0;
+            $total_jumlah_per_unit = 0;
+        }
         //#########################
 
         $porto = [
