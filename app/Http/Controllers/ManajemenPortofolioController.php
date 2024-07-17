@@ -214,18 +214,6 @@ class ManajemenPortofolioController extends Controller
         //     $porto
         // );
 
-
-        Log::info("RESULT");
-        Log::info(json_encode($result));
-        Log::info("----");
-        Log::info("PORTO");
-        Log::info(json_encode($porto));
-        Log::info("----");
-
-        // Save $porto to porto.json in public directory
-        file_put_contents(public_path('porto.json'), json_encode($porto));
-        file_put_contents(public_path('result.json'), json_encode($result));
-
         return response()->json(['result' => $result, 'porto' => $porto]);
     }
 }
