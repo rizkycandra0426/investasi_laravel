@@ -120,7 +120,7 @@ class ManajemenPortofolioController extends Controller
             $data['return'] = $hargaclose - $data['equity'];
 
 
-            $vol_total = $data['vol_beli'] - $data['vol_jual'];
+            $vol_total = ($data['vol_beli'] ?? 0) - ($data['vol_jual'] ?? 0);
             $total_beli = ($data['harga_beli']  * ($vol_total * 100));
             $total_saat_ini = ($hargasaham  * ($vol_total * 100));
 
