@@ -1,2 +1,1 @@
-# ta_laravel
- 
+https://id.investing.com/indices/idx-composite-historical-data

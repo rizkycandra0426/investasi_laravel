@@ -208,7 +208,8 @@ class ManajemenPortofolioController extends Controller
             'valuasi_saat_ini' => $valuasi_saat_ini,
             //##########3
             'jumlah_unit_penyertaan' => $total_jumlah_per_unit,
-            'harga_unit' => $total_harga_per_unit,
+            // 'harga_unit' => $total_harga_per_unit,
+            'harga_unit' => $harga_per_unit_yang_diinvestasikan,
             //##########3
             'yield' => $yield_percentage,
             'ihsg_start' => $ihsg_start,

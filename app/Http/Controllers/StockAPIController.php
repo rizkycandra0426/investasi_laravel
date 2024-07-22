@@ -102,10 +102,6 @@ class StockAPIController extends Controller
         ]);
     }
 
-
-
-
-
     public function updateStock()
     {
         $response = Http::acceptJson()
