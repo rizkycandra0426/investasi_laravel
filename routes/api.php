@@ -19,12 +19,14 @@ use App\Http\Controllers\StockAPIController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DynamicApiController;
 use App\Http\Controllers\GoApiController;
+use App\Http\Controllers\HargaUnitController;
 use App\Http\Controllers\HistoriTahunanController;
 use App\Http\Controllers\ManajemenPortofolioController;
 use App\Http\Controllers\KursController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotificationSchedulerController;
 use App\Http\Controllers\PostBeliController;
+use App\Http\Controllers\YieldController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AdminUserMiddleware;
 use App\Http\Middleware\ApiMiddleware;
@@ -102,6 +104,8 @@ use App\Http\Middleware\GuestMiddleware;
 // });
 
 Route::apiResource('v2/ihsg', DynamicApiController::class);
+Route::apiResource('v2/harga-unit', HargaUnitController::class);
+Route::apiResource('v2/yield', YieldController::class);
 
 Route::get('test-send-email', [AuthenticationController::class, 'testSendEmail']);
 Route::get('/send-notifications', [NotificationSchedulerController::class, 'sendNotifications']);
