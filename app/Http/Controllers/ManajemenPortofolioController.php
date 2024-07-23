@@ -23,7 +23,7 @@ class ManajemenPortofolioController extends Controller
     public function indexporto(Request $request)
     {
         // dd($request->auth['user']['user_id']);
-
+        $sumSaldo = Saldo::where('user_id', request()->user_id)->sum('saldo');
         $portobeli = PortofolioBeli::where('user_id', request()->user_id)
             ->when(request()->has('year'), function ($query) {
                 return $query->whereYear('tanggal_beli', request()->year);
@@ -130,10 +130,14 @@ class ManajemenPortofolioController extends Controller
             $floating_return2 = ($total_saat_ini - $total_beli);
             $equity2 = $total_beli;
 
+            $fundAlloc = ($equity2 / $sumSaldo) * 100;
+
             $result[] = [
                 'close' => $hargasaham,
                 'harga_beli' => $data['harga_beli'],
                 'harga_saat_ini' => $hargasaham,
+                'fund_alloc' => $fundAlloc,
+                'sum_saldo' => $sumSaldo,
                 'total_beli' => $total_beli,
                 'total_saat_ini' => $total_saat_ini,
                 'emiten' => $data['nama_saham'],
@@ -185,7 +189,6 @@ class ManajemenPortofolioController extends Controller
             $jumlah_per_unit_yang_diinvestasikan = $sum_total_saat_ini / 1000;
         }
 
-        $sumSaldo = Saldo::where('user_id', request()->user_id)->sum('saldo');
         $sisaSaldo = $sumSaldo - $sum_total_beli;
         $jumlah_per_unit_sisa_saldo = $sisaSaldo / 1000;
         $harga_per_unit_sisa_saldo = 1000;
@@ -217,10 +220,10 @@ class ManajemenPortofolioController extends Controller
             'yield_ihsg' => $yield_ihsg
         ];
 
-        // ManajemenPorto::updateOrCreate(
-        //     ['user_id' => request()->user_id],
-        //     $porto
-        // );
+        for ($i = 0; $i < count($result); $i++) {
+            $valueEffect = ($result[$i]["equity"] / $valuasi_saat_ini) * 100;
+            $result[$i]['value_effect'] = $valueEffect;
+        }
 
         return response()->json(['result' => $result, 'porto' => $porto]);
     }
