@@ -221,7 +221,7 @@ class ManajemenPortofolioController extends Controller
         ];
 
         for ($i = 0; $i < count($result); $i++) {
-            $valueEffect = ($result[$i]["equity"] / $valuasi_saat_ini) * 100;
+            $valueEffect = ($result[$i]["equity"] / $valuasi_saat_ini) / 100;
             $result[$i]['value_effect'] = $valueEffect;
         }
 
