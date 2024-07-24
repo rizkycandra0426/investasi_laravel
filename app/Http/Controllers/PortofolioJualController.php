@@ -82,6 +82,7 @@ class PortofolioJualController extends Controller
 
     public function store(Request $request)
     {
+        // {id_saham: 3, tanggal_jual: 2024-07-24, volume_jual: 11, action: READ}
         $is_read = request()->action == "READ";
         $is_sell = request()->action == "SELL";
 
@@ -201,9 +202,18 @@ class PortofolioJualController extends Controller
                 $equity = $item['equity'] + $item['return'];
                 // dd($equity);
                 break;
-            } else {
-                return response()->json(['error' => 'tidak ada data saham tersebut.'], 400);
             }
+        }
+
+        $voljual = request()->volume_jual;
+        $sisa = $voltotal - $voljual;
+        if ($sisa < -1) {
+            return response()->json([
+                'error' => "Volume tersedia hanya $voltotal.",
+                'id_saham' => request()->id_saham,
+                'voltotal' => $voltotal,
+                'data' => $result
+            ], 400);
         }
         // dd($vol_total);
         // dd($saham['nama_saham']);
