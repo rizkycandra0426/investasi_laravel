@@ -221,8 +221,13 @@ class ManajemenPortofolioController extends Controller
         ];
 
         for ($i = 0; $i < count($result); $i++) {
-            $valueEffect = (($result[$i]["vol_total"] * 100 * $result[$i]["harga_saat_ini"]) / $valuasi_saat_ini) * 100;
-            $result[$i]['value_effect'] = $valueEffect;
+            $voltotal = $result[$i]["vol_total"];
+            if ($voltotal > 0) {
+                $valueEffect = (($voltotal * 100 * $result[$i]["harga_saat_ini"]) / $valuasi_saat_ini) * 100;
+                $result[$i]['value_effect'] = $valueEffect;
+            } else {
+                $result[$i]['value_effect'] = 0;
+            }
         }
 
         return response()->json(['result' => $result, 'porto' => $porto]);
