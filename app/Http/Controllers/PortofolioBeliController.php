@@ -70,43 +70,46 @@ class PortofolioBeliController extends Controller
             'id_saham' => 'required',
             'action' => 'required', // READ | BUY
             'tanggal_beli' => 'required',
+            'harga_beli' => 'required',
             'volume_beli' => ' required',
             'id_sekuritas' => 'nullable',
+            'jenis_input' => 'nullable',
         ]);
 
 
         $data['id_sekuritas'] = 1;
 
-        $saham = Saham::where('id_saham', '=', $data['id_saham'])->first()->toArray();
-        $response = Http::acceptJson()
-            ->withHeaders([
-                'X-API-KEY' => GoApiController::getApiKey()
-            ])->withoutVerifying() // Disable SSL verification
-            ->get('https://api.goapi.io/stock/idx/prices?symbols=' . $saham['nama_saham'])
-            ->json();
-        $hargasaham = $response['data']['results'][0]['close'];
+        // $saham = Saham::where('id_saham', '=', $data['id_saham'])->first()->toArray();
+        // $response = Http::acceptJson()
+        //     ->withHeaders([
+        //         'X-API-KEY' => GoApiController::getApiKey()
+        //     ])->withoutVerifying() // Disable SSL verification
+        //     ->get('https://api.goapi.io/stock/idx/prices?symbols=' . $saham['nama_saham'])
+        //     ->json();
+        // $hargasaham = $response['data']['results'][0]['close'];
 
-        // dd($hargasaham);
-        $lot = 100;
-        $pembelian = $data['volume_beli'] * $lot * $hargasaham;
-        // dd($volume);
+        // // dd($hargasaham);
+        // $lot = 100;
+        // $pembelian = $data['volume_beli'] * $lot * $hargasaham;
+        // // dd($volume);
 
-        $sekuritas = Sekuritas::where('id_sekuritas', '=', $data['id_sekuritas'])->first()->toArray();
-        $potongan = ceil($pembelian * $sekuritas['fee'] / 100);
-        $data['harga_total'] = $pembelian;
-        $data['pembelian'] = $pembelian + $potongan;
-        $data['harga_beli'] = $hargasaham;
+        // $sekuritas = Sekuritas::where('id_sekuritas', '=', $data['id_sekuritas'])->first()->toArray();
+        // $potongan = ceil($pembelian * $sekuritas['fee'] / 100);
+
+        $data['harga_total'] = $data['volume_beli'] * $data['harga_beli'];
+        $data['pembelian'] = $data['harga_beli'];
 
         // Sum all 'saldo' values for the given user_id
         $saldo = Saldo::where('user_id', request()->user_id)->sum('saldo');
-        // dd($saldo);
+        // $saldo = Saldo::where('user_id', '1')->sum('saldo');
+        // dd($saldo > $data['pembelian']);
 
 
         if (!$saldo) {
             return response()->json(['error' => 'Saldo not found for the user.'], 404);
         }
 
-        $saldo = Saldo::where('user_id', request()->user_id)->sum('saldo');
+        // $saldo = Saldo::where('user_id', request()->user_id)->sum('saldo');
 
         if ($data['action'] == 'READ') {
             return response()->json([
@@ -152,18 +155,40 @@ class PortofolioBeliController extends Controller
     public function update(Request $request, $id)
     {
         $portofolioBeli = PortofolioBeli::findOrFail($id);
+
+        // dd($request, $id);
+
         $data = $request->validate([
-            'id_saham' => 'required',
-            'volume_beli' => 'required',
-            'tanggal_beli' => 'required',
-            'harga_beli' => 'required',
-            'harga_total' => 'required',
-            'pembelian' => ' required',
-            'id_sekuritas' => 'nullable',
+            'jenis_input' => 'required',
+            // Validate pembelian only if jenis_input is manual
+            'pembelian' => 'required_if:jenis_input,manual|nullable',
         ]);
 
+        // Check the jenis_input value
+        if ($data['jenis_input'] == 'manual') {
+            // Set pembelian based on the request data
+            $data['pembelian'] = $request->input('pembelian');
+            $data['harga_total'] = $portofolioBeli['volume_beli'] * $data['pembelian']; 
+        } else if ($data['jenis_input'] == 'realtime') {
+            $saham = Saham::where('id_saham', '=', $portofolioBeli['id_saham'])->first()->toArray();
+            $response = Http::acceptJson()
+                ->withHeaders([
+                    'X-API-KEY' => GoApiController::getApiKey()
+                ])->withoutVerifying() // Disable SSL verification
+                ->get('https://api.goapi.io/stock/idx/prices?symbols=' . $saham['nama_saham'])
+                ->json();
+            $hargasaham = $response['data']['results'][0]['close'];
+            // dd($hargasaham);
+            $data['pembelian'] = $hargasaham;
+            $data['harga_total'] = $portofolioBeli['volume_beli'] * $data['pembelian']; 
+        } else if ($data['jenis_input'] == 'closeyest') {
+
+        }
+        // dd($data);
+        // Update the rest of the data
         $portofolioBeli->update($data);
-        return response()->json(['message' => 'PortofolioBeli updated', 'portofolioBeli' => $portofolioBeli], 200);
+
+    return response()->json(['message' => 'PortofolioBeli updated', 'portofolioBeli' => $portofolioBeli], 200);
     }
 
     public function destroy($id)

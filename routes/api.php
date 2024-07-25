@@ -27,6 +27,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotificationSchedulerController;
 use App\Http\Controllers\PostBeliController;
 use App\Http\Controllers\YieldController;
+use App\Http\Controllers\IhsgController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AdminUserMiddleware;
 use App\Http\Middleware\ApiMiddleware;
@@ -102,6 +103,7 @@ use App\Http\Middleware\GuestMiddleware;
 
 //     });
 // });
+Route::apiResource('ihsg', IhsgController::class);
 
 Route::apiResource('v2/ihsg', DynamicApiController::class);
 Route::apiResource('v2/harga-unit', HargaUnitController::class);
@@ -120,7 +122,7 @@ Route::middleware(ApiMiddleware::class)->group(function () {
     Route::get('/dividen', [StockAPIController::class, 'indexdividen']);
     Route::get('/berita', [BeritaController::class, 'index']);
     Route::get('/kurs', [KursController::class, 'index']);
-    Route::get('/ihsg', [StockAPIController::class, 'ihsg']);
+    // Route::get('/ihsg', [StockAPIController::class, 'ihsg']);
 
     Route::get('/stock/{emiten}', [StockAPIController::class, 'stock']); // Harga
     Route::get('/stock', [StockAPIController::class, 'index']); // List Saham

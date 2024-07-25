@@ -16,6 +16,7 @@ class PortofolioBeli extends Model
         'harga_beli',
         'harga_total',
         'pembelian',
+        'jenis_input',
         'id_sekuritas',
     ];
 
