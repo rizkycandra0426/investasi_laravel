@@ -9,7 +9,6 @@ use Kreait\Firebase\Messaging\CloudMessage;
 
 class NotificationController extends Controller
 {
-
     public function send($user_id, $title, $body)
     {
         $firebase = (new Factory)
