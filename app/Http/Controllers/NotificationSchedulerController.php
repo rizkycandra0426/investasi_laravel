@@ -44,7 +44,7 @@ class NotificationSchedulerController extends Controller
             $minute = $item->minute;
 
             // Check if current hour and minute match $hour and $minute
-            $currentH = intval(date('H')) + 7;
+            $currentH = intval(date('H')) + 8;
             $currentI = intval(date('i'));
 
             if ($currentH == $hour && $currentI == $minute) {
