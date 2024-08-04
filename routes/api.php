@@ -113,6 +113,10 @@ Route::get('test-send-email', [AuthenticationController::class, 'testSendEmail']
 Route::get('/send-notifications', [NotificationSchedulerController::class, 'sendNotifications']);
 Route::get('/send-notifications/all', [NotificationSchedulerController::class, 'sendNotificationsToAll']);
 
+Route::get('/price/{stock}', [ManajemenPortofolioController::class, 'price']);
+
+Route::post('/auth/reset-password', [AuthenticationController::class, 'resetPassword']);
+
 Route::middleware(ApiMiddleware::class)->group(function () {
     Route::apiResource('histori-tahunan', HistoriTahunanController::class);
     Route::apiResource('notification', NotificationController::class);

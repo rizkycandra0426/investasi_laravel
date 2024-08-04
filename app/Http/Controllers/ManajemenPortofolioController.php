@@ -19,6 +19,19 @@ use Illuminate\Support\Facades\Log;
 
 class ManajemenPortofolioController extends Controller
 {
+    public function price(Request $request, $namaSaham)
+    {
+        $response = Http::acceptJson()
+            ->withHeaders([
+                'X-API-KEY' => GoApiController::getApiKey()
+            ])->withoutVerifying() // Disable SSL verification
+            ->get('https://api.goapi.io/stock/idx/prices?symbols=' . $namaSaham)
+            ->json();
+        $hargasaham = $response['data']['results'][0]['close'];
+        return response()->json([
+            'data' => ['price' => $hargasaham]
+        ]);
+    }
 
     public function indexporto(Request $request)
     {

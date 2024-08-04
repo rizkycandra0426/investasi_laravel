@@ -365,4 +365,40 @@ class AuthenticationController extends Controller
             ]);
         }
     }
+
+    public function resetPassword(Request $request)
+    {
+        $correct_verification_code = $this->get6DigitCorrectVerificationCodeByInputtedEmail($request->email);
+        //check if request->verification_code is valid?
+        if ($request->verification_code != $correct_verification_code) {
+            return response()->json([
+                'error' => 1,
+                'message' => "Invalid Verification Code $correct_verification_code",
+                'code' => Response::HTTP_NOT_FOUND
+            ], 401);
+        }
+
+        $user = User::where('email', $request->email)->first();
+        if ($user) {
+            $user->password = Hash::make($request->password);
+            $user->save();
+            return response()->json([
+                'error' => 0,
+                'message' => 'Password Reset Successfully',
+                'code' => Response::HTTP_OK
+            ]);
+        } else {
+            return response()->json([
+                'error' => 1,
+                'message' => 'User not found',
+                'code' => Response::HTTP_NOT_FOUND
+            ], 401);
+        }
+    }
+
+    public function get6DigitCorrectVerificationCodeByInputtedEmail($email)
+    {
+        $secretNumber = 318231;
+        return substr(($secretNumber * strlen($email)), 0, 6);
+    }
 }
