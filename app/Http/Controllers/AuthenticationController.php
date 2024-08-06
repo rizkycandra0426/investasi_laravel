@@ -366,6 +366,26 @@ class AuthenticationController extends Controller
         }
     }
 
+    public function sendVerificationCode(Request $request)
+    {
+        $email = $request['email'];
+        $subject = 'Reset password verification code';
+
+        $code = $this->get6DigitCorrectVerificationCodeByInputtedEmail($request->email);
+        $message = "Verification code: $code";
+
+        $x = Mail::raw($message, function ($message) use ($email, $subject) {
+            $message->to($email)
+                ->subject($subject);
+        });
+
+        return response()->json([
+            'error' => 0,
+            'message' => 'Verification code sent successfully',
+            'code' => Response::HTTP_OK
+        ]);
+    }
+
     public function resetPassword(Request $request)
     {
         $correct_verification_code = $this->get6DigitCorrectVerificationCodeByInputtedEmail($request->email);

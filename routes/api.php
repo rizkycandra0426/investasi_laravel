@@ -28,6 +28,7 @@ use App\Http\Controllers\NotificationSchedulerController;
 use App\Http\Controllers\PostBeliController;
 use App\Http\Controllers\YieldController;
 use App\Http\Controllers\IhsgController;
+use App\Http\Controllers\OfflineController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AdminUserMiddleware;
 use App\Http\Middleware\ApiMiddleware;
@@ -104,7 +105,6 @@ use App\Http\Middleware\GuestMiddleware;
 //     });
 // });
 Route::apiResource('ihsg', IhsgController::class);
-
 Route::apiResource('v2/ihsg', DynamicApiController::class);
 Route::apiResource('v2/harga-unit', HargaUnitController::class);
 Route::apiResource('v2/yield', YieldController::class);
@@ -116,6 +116,7 @@ Route::get('/send-notifications/all', [NotificationSchedulerController::class, '
 Route::get('/price/{stock}', [ManajemenPortofolioController::class, 'price']);
 
 Route::post('/auth/reset-password', [AuthenticationController::class, 'resetPassword']);
+Route::post('/auth/send-verification-code', [AuthenticationController::class, 'sendVerificationCode']);
 
 Route::middleware(ApiMiddleware::class)->group(function () {
     Route::apiResource('histori-tahunan', HistoriTahunanController::class);
@@ -181,4 +182,10 @@ Route::middleware(ApiMiddleware::class)->group(function () {
     Route::get('/emiten', [StockAPIController::class, 'getDataAdmin']);
     Route::get('/emiten/update', [StockAPIController::class, 'updateStock']);
     Route::get('/emiten/delete/{emiten}', [StockAPIController::class, 'delete']);
+
+    // Route offline mode
+    Route::get('/offline/{endpoint}', [OfflineController::class, 'index']); 
+    Route::post('/offline/{endpoint}', [OfflineController::class, 'store']);
+    Route::put('/offline/{endpoint}/{id}', [OfflineController::class, 'update']);
+    Route::delete('/offline/{endpoint}/{id}', [OfflineController::class, 'destroy']);
 });

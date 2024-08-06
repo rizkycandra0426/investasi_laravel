@@ -13,9 +13,6 @@ use Exception;
 use Laravel\Sanctum\PersonalAccessToken;
 class CategoryRequestController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         try {
