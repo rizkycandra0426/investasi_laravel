@@ -11,7 +11,7 @@ class Pengeluaran extends Model
     protected $table = 'pengeluarans';
     protected $primaryKey = 'id_pengeluaran';
 
-    protected $fillable = ['user_id','tanggal','jumlah','catatan','id_kategori_pengeluaran'];
+    protected $fillable = ['id_pengeluaran', 'user_id','tanggal','jumlah','catatan','id_kategori_pengeluaran'];
 
     public function kategori_pengeluaran()
     {

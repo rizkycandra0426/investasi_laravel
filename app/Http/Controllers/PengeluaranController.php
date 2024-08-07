@@ -54,6 +54,7 @@ class PengeluaranController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
+            'id_pengeluaran' => 'nullable',
             'tanggal' => 'required',
             'jumlah' => 'required',
             'catatan' => 'nullable',

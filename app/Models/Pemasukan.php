@@ -11,7 +11,7 @@ class Pemasukan extends Model
     protected $table = 'pemasukans';
     protected $primaryKey = 'id_pemasukan';
 
-    protected $fillable = ['user_id','tanggal','jumlah','catatan','id_kategori_pemasukan'];
+    protected $fillable = ['id_pemasukan','user_id','tanggal','jumlah','catatan','id_kategori_pemasukan'];
 
     public function kategori_pemasukan()
     {

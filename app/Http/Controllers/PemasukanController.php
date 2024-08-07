@@ -52,6 +52,7 @@ class PemasukanController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
+            'id_pemasukan' => 'nullable',
             'tanggal' => 'required',
             'jumlah' => 'required',
             'catatan' => 'nullable',
