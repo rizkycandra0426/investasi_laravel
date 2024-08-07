@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Berita;
 use App\Models\KategoriPemasukan;
 use App\Models\KategoriPengeluaran;
 use App\Models\Pemasukan;
@@ -24,9 +25,15 @@ class OfflineController extends Controller
             return KategoriPengeluaran::paginate($limit);
         }
         else  if ($endpoint == "pemasukan") {
-            return Pemasukan::where('user_id', request()->user_id)->paginate($limit);
+            return Pemasukan::with('kategori_pemasukan')->where('user_id', request()->user_id)->paginate($limit);
         }
         else  if ($endpoint == "pengeluaran") {
+            return Pengeluaran::with('kategori_pengeluaran')->where('user_id', request()->user_id)->paginate($limit);
+        }
+        else  if ($endpoint == "berita") {
+            return Berita::paginate($limit);
+        }
+        else  if ($endpoint == "transaction-histories") {
             return Pengeluaran::where('user_id', request()->user_id)->paginate($limit);
         }
 

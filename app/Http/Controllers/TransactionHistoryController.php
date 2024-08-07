@@ -13,8 +13,10 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class TransactionHistoryController extends Controller
 {
+    //NOTES: Update dengan hati2, perubahan yang terjadi disini akan perlu mengupdate kode versi Flutter juga
     public function filterByMonthAndYear($month = null, $year = null)
     {
+
         if ($month !== null && (!is_numeric($month) || $month < 1 || $month > 12)) {
             return response()->json(['error' => 'Invalid month parameter. Provide a valid month number between 1 and 12.'], 400);
         }
@@ -65,6 +67,7 @@ class TransactionHistoryController extends Controller
                 "type" => "Pemasukan"
             ]);
         }
+        
         foreach ($pengeluaranList as $p) {
             array_push($all, [
                 "id" => $p['id_pengeluaran'],
@@ -88,6 +91,8 @@ class TransactionHistoryController extends Controller
             'user_id' => request()->user_id,
         ], 200);
     }
+
+    //NOTES: Update dengan hati2, perubahan yang terjadi disini akan perlu mengupdate kode versi Flutter juga
     public function filterByYear($year = null)
     {
         $monthlyData = [];
@@ -115,6 +120,7 @@ class TransactionHistoryController extends Controller
         ]);
     }
 
+    //NOTES: Update dengan hati2, perubahan yang terjadi disini akan perlu mengupdate kode versi Flutter juga
     public function filterCategoriesByMonthAndYear($month = null, $year = null)
     {
         // Validasi bulan dan tahun, jika tidak diberikan, gunakan bulan dan tahun saat ini
