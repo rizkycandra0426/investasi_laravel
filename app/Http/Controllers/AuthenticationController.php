@@ -291,8 +291,6 @@ class AuthenticationController extends Controller
             'email_verification_code' => Uuid::uuid4()->toString()
         ]);
 
-        // Send email with verification code Mailtrap?
-        // Mail::to($user->email)->send(new VerificationMail($user));
         $email = $request['email'];
         $subject = 'Silahkan verifikasi akun anda';
 
@@ -301,7 +299,7 @@ class AuthenticationController extends Controller
         $message = "Klik utk verifikasi: $base_url";
 
         $x = Mail::raw($message, function ($message) use ($email, $subject) {
-            $message->to($email)
+            $message->from('dahlansudar2@gmail.com', 'Smart Finance')->to($email)
                 ->subject($subject);
         });
 
@@ -323,7 +321,7 @@ class AuthenticationController extends Controller
         $message = "Silahkan verifikasi akun anda dengan klik link berikut: ' . url('/') . '/api/verify/testing Terima kasih.";
 
         $x = Mail::raw($message, function ($message) use ($email, $subject) {
-            $message->to($email)
+            $message->from('dahlansudar2@gmail.com', 'Smart Finance')->to($email)
                 ->subject($subject);
         });
 
@@ -348,7 +346,7 @@ class AuthenticationController extends Controller
             $subject = 'Email kamu sudah terverifikasi';
             $message = "Selamat email kamu sudah terverifikasi";
             $x = Mail::raw($message, function ($message) use ($email, $subject) {
-                $message->to($email)
+                $message->from('dahlansudar2@gmail.com', 'Smart Finance')->to($email)
                     ->subject($subject);
             });
 
@@ -375,7 +373,7 @@ class AuthenticationController extends Controller
         $message = "Verification code: $code";
 
         $x = Mail::raw($message, function ($message) use ($email, $subject) {
-            $message->to($email)
+            $message->from('dahlansudar2@gmail.com', 'Smart Finance')->to($email)
                 ->subject($subject);
         });
 
