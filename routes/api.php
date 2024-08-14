@@ -118,6 +118,9 @@ Route::get('/price/{stock}', [ManajemenPortofolioController::class, 'price']);
 Route::post('/auth/reset-password', [AuthenticationController::class, 'resetPassword']);
 Route::post('/auth/send-verification-code', [AuthenticationController::class, 'sendVerificationCode']);
 
+Route::get('/berita', [BeritaController::class, 'index']);
+Route::post('/berita', [BeritaController::class, 'create']);
+
 Route::middleware(ApiMiddleware::class)->group(function () {
     Route::apiResource('histori-tahunan', HistoriTahunanController::class);
     Route::apiResource('notification', NotificationController::class);
@@ -125,7 +128,7 @@ Route::middleware(ApiMiddleware::class)->group(function () {
 
     Route::get('/porto', [ManajemenPortofolioController::class, 'indexporto']);
     Route::get('/dividen', [StockAPIController::class, 'indexdividen']);
-    Route::get('/berita', [BeritaController::class, 'index']);
+    // Route::get('/berita', [BeritaController::class, 'index']);
     Route::get('/kurs', [KursController::class, 'index']);
     // Route::get('/ihsg', [StockAPIController::class, 'ihsg']);
 

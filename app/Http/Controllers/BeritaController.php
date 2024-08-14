@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Berita;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Spatie\Crawler\Crawler;
 
 class BeritaController extends Controller
 {
@@ -13,31 +15,8 @@ class BeritaController extends Controller
      */
     public function index()
     {
-        $response = Http::acceptJson()
-            ->withHeaders([
-                'X-API-KEY' => GoApiController::getApiKey()
-            ])->withoutVerifying()->get('https://api.goapi.io/stock/idx/news?page=5')->json();
-
-        $data = $response['data']['results'];
-
-        foreach ($data as $item) {
-            Berita::updateOrCreate(
-                [
-                    'title' => $item['title'],
-                    'published_at' => $item['published_at'],
-                    'url' => $item['url']
-                ],
-                [
-                    'image' => $item['image'],
-                    'description' => $item['description'],
-                    'publisher_name' => $item['publisher']['name'],
-                    'publisher_logo' => $item['publisher']['logo'],
-                ]
-            );
-        }
-
-        $paginatedRecords = Berita::orderBy('created_at', 'desc')
-            ->paginate(10);
+        $paginatedRecords = Berita::orderBy('published_at', 'desc')
+            ->paginate(20);
 
         return response()->json($paginatedRecords);
     }
@@ -46,9 +25,35 @@ class BeritaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $validKey = "f2139dff-b812-5391-eb6c-d8897461";
+        //get json body?
+        $json = $request->all();
+
+        if ($json['key'] != 'f2139dff-b812-5391-eb6c-d8897461') return response()->json(['message' => 'Invalid key'], 401);
+
+        $title = $json['title'];
+        $publishedDate = $json['published_date'];
+        $url = $json['url'];
+        $imageUrl = $json['image_url'];
+        $description = $json['description'];
+
+        Berita::updateOrCreate(
+            [
+                'title' => $title,
+                'published_at' => $publishedDate,
+                'url' => $url,
+            ],
+            [
+                'image' => $imageUrl,
+                'description' => $description,
+                'publisher_name' => 'idx.co.id',
+                'publisher_logo' => 'https://res.cloudinary.com/dotz74j1p/image/upload/v1715660683/no-image.jpg',
+            ]
+        );
+
+        return response()->json(['message' => 'Berita berhasil disimpan']);
     }
 
     /**
@@ -78,9 +83,7 @@ class BeritaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update()
-    {
-    }
+    public function update() {}
 
 
     /**

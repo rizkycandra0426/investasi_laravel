@@ -37,6 +37,15 @@ class NotificationSchedulerController extends Controller
     // Panggil fungsi ini setiap 1 menit 1x
     public function sendNotifications(Request $request)
     {
+        $key = $request->key;
+        if ($key != "f2139dff-b812-5391-eb6c-d8897461") {
+            return response()->json([
+                "message" => "Invalid key"
+            ], 401);
+        }
+
+        $sendNow = $request->now == "true" ? true : false;
+
         $data = NotificationScheduler::get();
         foreach ($data as $item) {
             Log::info("Sending notification to user " . $item->user_id);
@@ -47,7 +56,14 @@ class NotificationSchedulerController extends Controller
             $currentH = intval(date('H')) + 8;
             $currentI = intval(date('i'));
 
-            if ($currentH == $hour && $currentI == $minute) {
+            $currentH = $currentH==24 ? 0 : $currentH;
+
+            Log::info("Current time: $currentH:$currentI, Scheduled time: $hour:$minute");
+
+            if ($sendNow) {
+                $notificationController = new NotificationController();
+                $notificationController->send($item->user_id, "Reminder", $item->message);
+            } else if ($currentH == $hour && $currentI == $minute) {
                 $notificationController = new NotificationController();
                 $notificationController->send($item->user_id, "Reminder", $item->message);
             }
