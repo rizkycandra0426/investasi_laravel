@@ -20,7 +20,6 @@ setInterval(() => {
 
 
 setInterval(() => {
-    return;
     console.log(`Scrap news at ${new Date()}`);
     scrapNews();
-}, 5000);
+}, 60000);
