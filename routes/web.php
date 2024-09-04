@@ -16,7 +16,7 @@ use App\Http\Controllers\StockAPIController;
 */
 
 Route::get('/', function () {
-    return "Server ok";
+    return "Server v1.0";
 });
 Route::get('/add-dividen', function () {
     return view('welcome');
