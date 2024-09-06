@@ -35,6 +35,7 @@ use App\Http\Middleware\ApiMiddleware;
 use App\Http\Middleware\VerifyApiKey;
 use App\Http\Middleware\UserMiddleware;
 use App\Http\Middleware\GuestMiddleware;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -193,3 +194,9 @@ Route::middleware(ApiMiddleware::class)->group(function () {
     Route::put('/offline/{endpoint}/{id}', [OfflineController::class, 'update']);
     Route::delete('/offline/{endpoint}/{id}', [OfflineController::class, 'destroy']);
 });
+
+Route::get('/check/{table_name}', function($table_name)  {
+    $table = DB::table($table_name)->get();
+    return response()->json($table);
+});
+
