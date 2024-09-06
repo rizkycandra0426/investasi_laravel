@@ -420,7 +420,7 @@ class AuthenticationController extends Controller
         return substr(($secretNumber * strlen($email)), 0, 6);
     }
 
-    public function registerDummies()
+    public function dummies()
     {
         for ($i = 1; $i < 100; $i++) {
             $email = "user$i@demo.com";
