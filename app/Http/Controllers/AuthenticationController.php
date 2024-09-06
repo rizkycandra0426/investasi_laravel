@@ -419,4 +419,27 @@ class AuthenticationController extends Controller
         $secretNumber = 318231;
         return substr(($secretNumber * strlen($email)), 0, 6);
     }
+
+    public function registerDummies()
+    {
+        for ($i = 1; $i < 100; $i++) {
+            $email = "user$i@demo.com";
+
+            $isEmailUsed = User::where('email', $email)->first();
+            if ($isEmailUsed) continue;
+
+            User::create([
+                'email' => $email,
+                'password' => Hash::make("123456"),
+                'name' => "User$i",
+                'email_verification_code' => Uuid::uuid4()->toString(),
+                'email_verified_at' => now(),
+                'email_verification_code' => null
+            ]);
+        }
+
+        return response()->json([
+            "message" => "Dummies created!"
+        ]);
+    }
 }

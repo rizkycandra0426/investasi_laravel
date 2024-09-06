@@ -166,6 +166,7 @@ Route::middleware(ApiMiddleware::class)->group(function () {
 
     Route::post('login', [AuthenticationController::class, 'login']);
     Route::post('register', [AuthenticationController::class, 'register']);
+    Route::get('dummies', [AuthenticationController::class, 'dummies']);
     Route::get('verify/{code}', [AuthenticationController::class, 'verify']);
     Route::post('logout', [AuthenticationController::class, 'logout']);
 

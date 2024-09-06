@@ -37,13 +37,6 @@ class NotificationSchedulerController extends Controller
     // Panggil fungsi ini setiap 1 menit 1x
     public function sendNotifications(Request $request)
     {
-        $key = $request->key;
-        if ($key != "f2139dff-b812-5391-eb6c-d8897461") {
-            return response()->json([
-                "message" => "Invalid key"
-            ], 401);
-        }
-
         $sendNow = $request->now == "true" ? true : false;
 
         $data = NotificationScheduler::get();
