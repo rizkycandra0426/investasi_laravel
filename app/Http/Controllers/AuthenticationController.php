@@ -422,7 +422,7 @@ class AuthenticationController extends Controller
 
     public function dummies()
     {
-        for ($i = 1; $i < 5; $i++) {
+        for ($i = 1; $i < 100; $i++) {
             $email = "user$i@demo.com";
 
             $user = User::where('email', $email)->first();
