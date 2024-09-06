@@ -1,0 +1,1 @@
+mysqldump -u smf smf < backup.sql
