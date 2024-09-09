@@ -91,6 +91,10 @@ class NotificationSchedulerController extends Controller
         ];
     }
 
+    public function sendNotificationsToAllUsersHook($request, $title,$message) {
+        return $this->sendNotificationsToAllUsers($title, $message);
+    }
+
     public function sendNotificationsToAllUsers($title, $message)
     {
         $users = User::all();
