@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Berita;
+use App\Models\NotificationScheduler;
+use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\NotificationSender;
 use Illuminate\Support\Facades\Log;
 use Spatie\Crawler\Crawler;
 
@@ -38,6 +41,16 @@ class BeritaController extends Controller
         $url = $json['url'];
         $imageUrl = $json['image_url'];
         $description = $json['description'];
+
+        //if exists?
+        $berita = Berita::where('url', $url)
+            ->first();
+        if (!$berita) {
+            //Notify all users
+            $users = User::all();
+            $c = new NotificationSchedulerController();
+            $c->sendNotificationsToAllUsers("Berita Baru", $title);
+        }
 
         Berita::updateOrCreate(
             [

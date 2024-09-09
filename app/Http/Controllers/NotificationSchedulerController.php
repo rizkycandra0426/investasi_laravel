@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\duler;
 use App\Models\NotificationScheduler;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
 class NotificationSchedulerController extends Controller
@@ -49,7 +50,7 @@ class NotificationSchedulerController extends Controller
             $currentH = intval(date('H')) + 8;
             $currentI = intval(date('i'));
 
-            $currentH = $currentH==24 ? 0 : $currentH;
+            $currentH = $currentH == 24 ? 0 : $currentH;
 
             Log::info("Current time: $currentH:$currentI, Scheduled time: $hour:$minute");
 
@@ -88,5 +89,19 @@ class NotificationSchedulerController extends Controller
             "H" => $currentH,
             "i" => $currentI,
         ];
+    }
+
+    public function sendNotificationsToAllUsers($title, $message)
+    {
+        $users = User::all();
+        foreach ($users as $user) {
+            $notificationController = new NotificationController();
+            $notificationController->send($user->id, $title, $message);
+        }
+
+        return [
+            "message" => "Success!"
+        ];
+
     }
 }
