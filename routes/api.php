@@ -112,7 +112,7 @@ Route::apiResource('v2/yield', YieldController::class);
 
 Route::get('test-send-email', [AuthenticationController::class, 'testSendEmail']);
 Route::get('/send-notifications', [NotificationSchedulerController::class, 'sendNotifications']);
-// Route::get('/send-notifications/all', [NotificationSchedulerController::class, 'sendNotificationsToAll']);
+Route::get('/send-notifications/all', [NotificationSchedulerController::class, 'sendNotificationsToAll']);
 Route::get('/send-notifications/all/{title}/{message}', [NotificationSchedulerController::class, 'sendNotificationsToAllUsers']);
 
 Route::get('/price/{stock}', [ManajemenPortofolioController::class, 'price']);
