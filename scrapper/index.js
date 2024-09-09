@@ -1,3 +1,8 @@
+/*
+cron tab scripts run index.js every 1 minute?
+* * * * * /usr/bin/node /var/www/html/idx-scrapper/index.js
+*/
+
 const puppeteer = require('puppeteer');
 
 (async () => {
