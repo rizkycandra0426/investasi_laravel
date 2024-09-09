@@ -1,3 +1,7 @@
+/*
+crontab every 1 minute run /home/smartfinance-backend/htdocs/scrapper/scheduler.js
+* * * * * /usr/bin/node /home/smartfinance-backend/htdocs/scrapper/scheduler.js
+*/
 function sendNotifications() {
     fetch(`http://localhost:8000/api/send-notifications?key=f2139dff-b812-5391-eb6c-d8897461&now=false`);
 }

@@ -189,12 +189,14 @@ Route::middleware(ApiMiddleware::class)->group(function () {
     Route::get('/emiten/update', [StockAPIController::class, 'updateStock']);
     Route::get('/emiten/delete/{emiten}', [StockAPIController::class, 'delete']);
 
-    // Route offline mode
-    Route::get('/offline/{endpoint}', [OfflineController::class, 'index']); 
-    Route::post('/offline/{endpoint}', [OfflineController::class, 'store']);
-    Route::put('/offline/{endpoint}/{id}', [OfflineController::class, 'update']);
-    Route::delete('/offline/{endpoint}/{id}', [OfflineController::class, 'destroy']);
 });
+
+
+// Route offline mode
+Route::get('/offline/{endpoint}', [OfflineController::class, 'index']); 
+Route::post('/offline/{endpoint}', [OfflineController::class, 'store']);
+Route::put('/offline/{endpoint}/{id}', [OfflineController::class, 'update']);
+Route::delete('/offline/{endpoint}/{id}', [OfflineController::class, 'destroy']);
 
 Route::get('/check/{table_name}', function($table_name)  {
     $table = DB::table($table_name)->get();
