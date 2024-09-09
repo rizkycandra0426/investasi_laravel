@@ -25,7 +25,7 @@ const puppeteer = require('puppeteer');
         var obj = JSON.parse(allText);
 
         /*
- $title = $item["Title"];
+            $title = $item["Title"];
             $imageUrl = "https://www.idx.co.id/" + $item["ImageUrl"];
 
             // https://www.idx.co.id/id/berita/berita/0ad6f5ee-a858-ef11-b809-005056aec3a4?id=10845
