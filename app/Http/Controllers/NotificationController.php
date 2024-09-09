@@ -22,7 +22,8 @@ class NotificationController extends Controller
         $messaging = $firebase->createMessaging();
         $user = User::find($user_id);
 
-        if($user->fcm_token == null) {
+        if ($user == null) return;
+        if ($user->fcm_token == null) {
             return response()->json([
                 "message" => "User ini belum memiliki fcm_token",
                 "user" => $user
