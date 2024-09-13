@@ -125,7 +125,6 @@ Route::get('/berita', [BeritaController::class, 'index']);
 /*
 # crontab codes to run /berita/scrap every 1 hour?
 0 * * * * /usr/bin/curl http://localhost:8000/api/berita/scrap
-
 # crontab codes to run /send-notifications/all every 1 minute?
 * * * * * /usr/bin/curl http://localhost:8000/api/send-notifications/all
 */
