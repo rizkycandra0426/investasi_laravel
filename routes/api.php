@@ -123,6 +123,14 @@ Route::post('/auth/send-verification-code', [AuthenticationController::class, 's
 
 Route::get('/berita', [BeritaController::class, 'index']);
 /*
+# crontab codes to run /send-notifications/testing every 1 minute?
+* * * * * /usr/bin/curl http://localhost:8000/api/send-notifications/testing
+
+# -------------------
+# -------------------
+
+# restart server every reboot
+@reboot cd /home/smartfinance-backend/htdocs && php artisan serve --host 0.0.0.0
 # crontab codes to run /berita/scrap every 1 hour?
 0 * * * * /usr/bin/curl http://localhost:8000/api/berita/scrap
 # crontab codes to run /send-notifications/all every 1 minute?
