@@ -31,6 +31,7 @@ class BeritaController extends Controller
 
     public function scrap(Request $request)
     {
+        //SOURCE: https://www.fxstreet-id.com/news?q=&hPP=20&idx=FxsIndexPro&p=0            
         // URL Algolia API
         $url = "https://50dev6p9k0-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%20(lite)%203.25.1%3Binstantsearch.js%202.6.3%3BJS%20Helper%202.24.0&x-algolia-application-id=50DEV6P9K0&x-algolia-api-key=cd2dd138c8d64f40f6d06a60508312b0";
 
@@ -100,7 +101,7 @@ class BeritaController extends Controller
                     [
                         'image' => $image_url,
                         'description' => $description,
-                        'publisher_name' => 'idx.co.id',
+                        'publisher_name' => 'fxstreet-id.com',
                         'publisher_logo' => 'https://res.cloudinary.com/dotz74j1p/image/upload/v1715660683/no-image.jpg',
                     ]
                 );
