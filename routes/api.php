@@ -114,6 +114,7 @@ Route::get('test-send-email', [AuthenticationController::class, 'testSendEmail']
 Route::get('/send-notifications', [NotificationSchedulerController::class, 'sendNotifications']);
 Route::get('/send-notifications/all', [NotificationSchedulerController::class, 'sendNotificationsToAll']);
 Route::get('/send-notifications/all/{title}/{message}', [NotificationSchedulerController::class, 'sendNotificationsToAllUsers']);
+Route::get('/send-notifications/testing', [NotificationSchedulerController::class, 'testing']);
 
 Route::get('/price/{stock}', [ManajemenPortofolioController::class, 'price']);
 
@@ -121,6 +122,14 @@ Route::post('/auth/reset-password', [AuthenticationController::class, 'resetPass
 Route::post('/auth/send-verification-code', [AuthenticationController::class, 'sendVerificationCode']);
 
 Route::get('/berita', [BeritaController::class, 'index']);
+/*
+# crontab codes to run /berita/scrap every 1 hour?
+0 * * * * /usr/bin/curl http://localhost:8000/api/berita/scrap
+
+# crontab codes to run /send-notifications/all every 1 minute?
+* * * * * /usr/bin/curl http://localhost:8000/api/send-notifications/all
+*/
+Route::get('/berita/scrap', [BeritaController::class, 'scrap']);
 Route::post('/berita', [BeritaController::class, 'create']);
 
 Route::middleware(ApiMiddleware::class)->group(function () {

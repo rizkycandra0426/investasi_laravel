@@ -102,4 +102,10 @@ class NotificationSchedulerController extends Controller
             "message" => "Success!"
         ];
     }
+
+    public function testing() {
+        $title = "Test notifications at " . date('Y-m-d H:i:s');
+        $body = "This is a test notification";
+        return $this->sendNotificationsToAllUsers($title, $body);
+    }
 }
