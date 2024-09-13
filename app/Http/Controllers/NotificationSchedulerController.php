@@ -94,8 +94,10 @@ class NotificationSchedulerController extends Controller
     {
         $users = User::all();
         foreach ($users as $user) {
-            $notificationController = new NotificationController();
-            $notificationController->send($user->id, $title, $message);
+            if ($user->fcm_token != null) {
+                $notificationController = new NotificationController();
+                $notificationController->send($user->user_id, $title, $message);
+            }
         }
 
         return [
@@ -103,7 +105,8 @@ class NotificationSchedulerController extends Controller
         ];
     }
 
-    public function testing() {
+    public function testing()
+    {
         $title = "Test notifications at " . date('Y-m-d H:i:s');
         $body = "This is a test notification";
         return $this->sendNotificationsToAllUsers($title, $body);

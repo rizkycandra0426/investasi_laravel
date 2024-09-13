@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
+use PhpParser\Node\Stmt\TryCatch;
 
 class NotificationController extends Controller
 {
@@ -24,21 +26,32 @@ class NotificationController extends Controller
 
         if ($user == null) return;
         if ($user->fcm_token == null) {
+            Log::info("User dengan id $user_id tidak memiliki fcm_token");
             return response()->json([
                 "message" => "User ini belum memiliki fcm_token",
                 "user" => $user
             ]);
         }
 
-        $message = CloudMessage::fromArray([
-            'token' => $user->fcm_token,
-            'notification' => [
-                'title' => $title,
-                'body' => $body,
-            ],
-        ]);
+        //try catch?
+        try {
+            $message = CloudMessage::fromArray([
+                'token' => $user->fcm_token,
+                'notification' => [
+                    'title' => $title,
+                    'body' => $body,
+                ],
+            ]);
 
-        $messaging->send($message);
+            $messaging->send($message);
+            Log::info("Send notififations to user " . $user_id);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json([
+                "message" => "Error",
+                "error" => $e->getMessage()
+            ]);
+        }
     }
 
     public function index(Request $request)
