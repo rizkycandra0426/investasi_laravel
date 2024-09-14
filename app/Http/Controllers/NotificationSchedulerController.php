@@ -26,6 +26,7 @@ class NotificationSchedulerController extends Controller
             $current->hour = $data["hour"];
             $current->minute = $data["minute"];
             $current->message = $data["message"];
+            $current->user_id = $data["user_id"];
             $current->save();
         } else {
             NotificationScheduler::create($data);
