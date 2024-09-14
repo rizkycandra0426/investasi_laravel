@@ -23,7 +23,7 @@ class NotificationSchedulerController extends Controller
 
         NotificationScheduler::where("user_id", $data["user_id"])->delete();
         NotificationScheduler::create($data);
-        
+
         return response()->json([
             "message" => "Success!"
         ]);
@@ -72,7 +72,9 @@ class NotificationSchedulerController extends Controller
             $minute = $item->minute;
 
             // Check if current hour and minute match $hour and $minute
-            $currentH = intval(date('H')) + $this->gmt;
+            // $currentH = intval(date('H')) + $this->gmt;
+            // $currentH is HOUR in GMT+8!
+            $currentH = intval(date('H'));
             $currentI = intval(date('i'));
 
             $notificationController = new NotificationController();
