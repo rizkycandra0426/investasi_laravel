@@ -87,9 +87,11 @@ class NotificationSchedulerController extends Controller
 
                 $notificationController = new NotificationController();
                 $notificationController->send($item->user_id, "Reminder", $message);
+
                 $messages[] = [
                     "user_id" => $item->user_id,
-                    "message" => $item->message
+                    "message" => $item->message,
+                    "fcm_token" => $user->fcm_token
                 ];
             }
         }
