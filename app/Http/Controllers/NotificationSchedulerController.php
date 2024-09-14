@@ -66,6 +66,7 @@ class NotificationSchedulerController extends Controller
     public function sendNotificationsToAll(Request $request)
     {
         $data = NotificationScheduler::get();
+        $messages = [];
         foreach ($data as $item) {
             Log::info("Sending notification to user " . $item->user_id);
             $hour = $item->hour;
@@ -77,13 +78,21 @@ class NotificationSchedulerController extends Controller
             $currentH = intval(date('H', time() + 8 * 3600));
             $currentI = intval(date('i'));
 
+            if(!($hour == $currentH && $minute == $currentI)) continue;
+
             $notificationController = new NotificationController();
             $notificationController->send($item->user_id, "Reminder", $item->message);
+
+            $messages[] = [
+                "user_id" => $item->user_id,
+                "message" => $item->message
+            ];
         }
 
         return [
             "H" => $currentH,
             "i" => $currentI,
+            "messages" => $messages
         ];
     }
     public function sendNotificationsToAllUsers($title, $message)
