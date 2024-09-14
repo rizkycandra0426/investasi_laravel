@@ -74,7 +74,7 @@ class NotificationSchedulerController extends Controller
             // Check if current hour and minute match $hour and $minute
             // $currentH = intval(date('H')) + $this->gmt;
             // $currentH is HOUR in GMT+0!
-            $currentH = date('H', time() + 8 * 3600);
+            $currentH = intval(date('H', time() + 8 * 3600));
             $currentI = intval(date('i'));
 
             $notificationController = new NotificationController();
