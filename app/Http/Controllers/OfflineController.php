@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Berita;
 use App\Models\KategoriPemasukan;
 use App\Models\KategoriPengeluaran;
+use App\Models\NotificationScheduler;
 use App\Models\Pemasukan;
 use App\Models\Pengeluaran;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class OfflineController extends Controller
 {
@@ -20,21 +22,18 @@ class OfflineController extends Controller
         $limit = 10000;
         if ($endpoint == "kategori-pemasukan") {
             return KategoriPemasukan::paginate($limit);
-        } 
-        else  if ($endpoint == "kategori-pengeluaran") {
+        } else  if ($endpoint == "kategori-pengeluaran") {
             return KategoriPengeluaran::paginate($limit);
-        }
-        else  if ($endpoint == "pemasukan") {
+        } else  if ($endpoint == "pemasukan") {
             return Pemasukan::with('kategori_pemasukan')->where('user_id', request()->user_id)->paginate($limit);
-        }
-        else  if ($endpoint == "pengeluaran") {
+        } else  if ($endpoint == "pengeluaran") {
             return Pengeluaran::with('kategori_pengeluaran')->where('user_id', request()->user_id)->paginate($limit);
-        }
-        else  if ($endpoint == "berita") {
+        } else  if ($endpoint == "berita") {
             return Berita::paginate($limit);
-        }
-        else  if ($endpoint == "transaction-histories") {
+        } else  if ($endpoint == "transaction-histories") {
             return Pengeluaran::where('user_id', request()->user_id)->paginate($limit);
+        } else  {
+            return DB::table($endpoint)->all();
         }
 
         return response()->json([
