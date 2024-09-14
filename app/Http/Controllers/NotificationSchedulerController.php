@@ -80,11 +80,12 @@ class NotificationSchedulerController extends Controller
 
             if (!($hour == $currentH && $minute == $currentI)) continue;
 
-            $notificationController = new NotificationController();
             $user = User::find($item->user_id);
             if ($user->fcm_token != null) {
                 // $message = $item->message;
                 $message = "Ingat Catat Keuanganmu Hari Ini, Pada Aplikasi Smart Finance";
+
+                $notificationController = new NotificationController();
                 $notificationController->send($item->user_id, "Reminder", $message);
                 $messages[] = [
                     "user_id" => $item->user_id,
