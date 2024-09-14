@@ -87,8 +87,8 @@ class NotificationSchedulerController extends Controller
 
                 // $notificationController = new NotificationController();
                 // $notificationController->send($item->user_id, "Reminder", $message);
-                // $this->sendNotificationsToUser($item->user_id, "Reminder", $message);
-                $this->sendNotificationsToAllUsers("Reminder", $message);
+                $this->sendNotificationsToUser($user->user_id, "Reminder", $message);
+                // $this->sendNotificationsToAllUsers("Reminder", $message);
 
 
                 $messages[] = [
@@ -124,7 +124,7 @@ class NotificationSchedulerController extends Controller
     {
         $users = User::all();
         foreach ($users as $user) {
-            if ($user->user_id != $user_id) continue;
+            if($user->user_id != $user_id) continue;
 
             if ($user->fcm_token != null) {
                 $notificationController = new NotificationController();
@@ -136,6 +136,7 @@ class NotificationSchedulerController extends Controller
             "message" => "Success!"
         ];
     }
+
 
     public function testing()
     {
