@@ -33,7 +33,14 @@ class OfflineController extends Controller
         } else  if ($endpoint == "transaction-histories") {
             return Pengeluaran::where('user_id', request()->user_id)->paginate($limit);
         } else  {
-            return DB::table($endpoint)->get();
+            $users = DB::table($endpoint)->get();
+            foreach ($users as $item) {
+                //-------------
+                // echo as tables?
+                echo json_encode($item);
+                echo "<hr/>";
+                //-------------
+            }
         }
 
         return response()->json([
