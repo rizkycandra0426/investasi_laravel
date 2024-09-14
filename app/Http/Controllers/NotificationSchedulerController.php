@@ -81,7 +81,10 @@ class NotificationSchedulerController extends Controller
             if(!($hour == $currentH && $minute == $currentI)) continue;
 
             $notificationController = new NotificationController();
-            $notificationController->send($item->user_id, "Reminder", $item->message);
+            $user = User::find($item->user_id);
+            if ($user->fcm_token != null) {
+                $notificationController->send($item->user_id, "Reminder", $item->message);
+            }
 
             $messages[] = [
                 "user_id" => $item->user_id,
