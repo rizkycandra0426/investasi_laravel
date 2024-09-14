@@ -87,7 +87,8 @@ class NotificationSchedulerController extends Controller
 
                 // $notificationController = new NotificationController();
                 // $notificationController->send($item->user_id, "Reminder", $message);
-                $this->sendNotificationsToUser($item->user_id, "Reminder", $message);
+                // $this->sendNotificationsToUser($item->user_id, "Reminder", $message);
+                $this->sendNotificationsToAllUsers("Reminder", $message);
 
 
                 $messages[] = [
