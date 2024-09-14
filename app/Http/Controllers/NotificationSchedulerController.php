@@ -85,8 +85,10 @@ class NotificationSchedulerController extends Controller
                 // $message = $item->message;
                 $message = "Ingat Catat Keuanganmu Hari Ini, Pada Aplikasi Smart Finance";
 
-                $notificationController = new NotificationController();
-                $notificationController->send($item->user_id, "Reminder", $message);
+                // $notificationController = new NotificationController();
+                // $notificationController->send($item->user_id, "Reminder", $message);
+                $this->sendNotificationsToUser($item->user_id, "Reminder", $message);
+
 
                 $messages[] = [
                     "user_id" => $item->user_id,
@@ -106,6 +108,23 @@ class NotificationSchedulerController extends Controller
     {
         $users = User::all();
         foreach ($users as $user) {
+            if ($user->fcm_token != null) {
+                $notificationController = new NotificationController();
+                $notificationController->send($user->user_id, $title, $message);
+            }
+        }
+
+        return [
+            "message" => "Success!"
+        ];
+    }
+
+    public function sendNotificationsToUser($user_id, $title, $message)
+    {
+        $users = User::all();
+        foreach ($users as $user) {
+            if ($user->user_id != $user_id) continue;
+
             if ($user->fcm_token != null) {
                 $notificationController = new NotificationController();
                 $notificationController->send($user->user_id, $title, $message);
