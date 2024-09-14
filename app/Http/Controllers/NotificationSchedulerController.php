@@ -19,14 +19,13 @@ class NotificationSchedulerController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        $data["user_id"] = request()->user_id;
+        $data["user_id"] = $data["user_id"];
 
         $current = NotificationScheduler::where("user_id", request()->user_id)->first();
         if ($current) {
             $current->hour = $data["hour"];
             $current->minute = $data["minute"];
             $current->message = $data["message"];
-            $current->user_id = $data["user_id"];
             $current->save();
         } else {
             NotificationScheduler::create($data);
