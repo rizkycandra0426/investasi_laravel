@@ -83,8 +83,9 @@ class NotificationSchedulerController extends Controller
             $notificationController = new NotificationController();
             $user = User::find($item->user_id);
             if ($user->fcm_token != null) {
-                $notificationController->send($item->user_id, "Reminder", $item->message);
-
+                // $message = $item->message;
+                $message = "Ingat Catat Keuanganmu Hari Ini, Pada Aplikasi Smart Finance";
+                $notificationController->send($item->user_id, "Reminder", $message);
                 $messages[] = [
                     "user_id" => $item->user_id,
                     "message" => $item->message
