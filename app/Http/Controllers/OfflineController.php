@@ -41,6 +41,7 @@ class OfflineController extends Controller
                 echo "<hr/>";
                 //-------------
             }
+            return;
         }
 
         return response()->json([
