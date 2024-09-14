@@ -78,18 +78,18 @@ class NotificationSchedulerController extends Controller
             $currentH = intval(date('H', time() + 8 * 3600));
             $currentI = intval(date('i'));
 
-            if(!($hour == $currentH && $minute == $currentI)) continue;
+            if (!($hour == $currentH && $minute == $currentI)) continue;
 
             $notificationController = new NotificationController();
             $user = User::find($item->user_id);
             if ($user->fcm_token != null) {
                 $notificationController->send($item->user_id, "Reminder", $item->message);
-            }
 
-            $messages[] = [
-                "user_id" => $item->user_id,
-                "message" => $item->message
-            ];
+                $messages[] = [
+                    "user_id" => $item->user_id,
+                    "message" => $item->message
+                ];
+            }
         }
 
         return [
