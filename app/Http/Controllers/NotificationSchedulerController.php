@@ -21,15 +21,9 @@ class NotificationSchedulerController extends Controller
         $data = $request->all();
         $data["user_id"] = $data["user_id"];
 
-        $current = NotificationScheduler::where("user_id", request()->user_id)->first();
-        if ($current) {
-            $current->hour = $data["hour"];
-            $current->minute = $data["minute"];
-            $current->message = $data["message"];
-            $current->save();
-        } else {
-            NotificationScheduler::create($data);
-        }
+        NotificationScheduler::where("user_id", $data["user_id"])->delete();
+        NotificationScheduler::create($data);
+        
         return response()->json([
             "message" => "Success!"
         ]);
