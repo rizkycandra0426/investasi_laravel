@@ -118,14 +118,4 @@ class NotificationController extends Controller
             "message" => "OK"
         ]);
     }
-
-    public function delete($user_id) {
-        $user = User::find($user_id);
-        $user->fcm_token = null;
-        $user->save();
-
-        return response()->json([
-            "message" => "OK"
-        ]);
-    }
 }

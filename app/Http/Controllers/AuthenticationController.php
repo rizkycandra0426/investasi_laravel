@@ -176,10 +176,6 @@ class AuthenticationController extends Controller
 
     public function logoutUser(Request $request)
     {
-        $notificationController = new NotificationController();
-        $notificationController->delete($request->auth['user']['user_id']);
-        
-        //delete ntification where user_id
         if ($request->auth['user_type'] == 'admin') {
             $admin = Admin::find($request->auth['admin']['admin_id']);
             $admin->api_token = null;
