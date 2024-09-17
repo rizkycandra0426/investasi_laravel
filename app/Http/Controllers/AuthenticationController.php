@@ -338,17 +338,37 @@ class AuthenticationController extends Controller
     {
         $user = User::where('email_verification_code', $code)->first();
         if ($user) {
-            $user->email_verified_at = now();
-            $user->email_verification_code = null;
-            $user->save();
+
+            try {
+                $user->email_verified_at = now();
+                $user->email_verification_code = null;
+                $user->save();
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => 1,
+                    'message' => 'Failed to update email',
+                    "error_message" => $e->getMessage(),
+                    'code' => Response::HTTP_INTERNAL_SERVER_ERROR
+                ]);
+            }
 
             $email = $user->email;
             $subject = 'Email kamu sudah terverifikasi';
             $message = "Selamat email kamu sudah terverifikasi";
-            $x = Mail::raw($message, function ($message) use ($email, $subject) {
-                $message->from('dahlansudar2@gmail.com', 'Smart Finance')->to($email)
-                    ->subject($subject);
-            });
+
+            try {
+                $x = Mail::raw($message, function ($message) use ($email, $subject) {
+                    $message->from('dahlansudar2@gmail.com', 'Smart Finance')->to($email)
+                        ->subject($subject);
+                });
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => 1,
+                    'message' => 'Failed to send email verification',
+                    "error_message" => $e->getMessage(),
+                    'code' => Response::HTTP_INTERNAL_SERVER_ERROR
+                ]);
+            }
 
             return response()->json([
                 'error' => 0,
