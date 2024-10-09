@@ -1,1 +1,2 @@
-mysqldump -u smf smf < backup.sql
+@REM Hanya jalankan di server
+mysqldump -u root smf < backup.sql
