@@ -1,0 +1,1 @@
+@REM run php artisan serve --host 0.0.0.0 on startup and now if its not running
