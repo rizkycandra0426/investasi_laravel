@@ -1,1 +1,2 @@
-@REM run php artisan serve --host 0.0.0.0 on startup and now if its not running
+@REM kill all process that use port 8000
+php artisan serve --host 0.0.0.0&
