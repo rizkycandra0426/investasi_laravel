@@ -113,6 +113,7 @@ Route::apiResource('v2/yield', YieldController::class);
 Route::get('test-send-email', [AuthenticationController::class, 'testSendEmail']);
 Route::get('/send-notifications', [NotificationSchedulerController::class, 'sendNotifications']);
 Route::get('/send-notifications/all', [NotificationSchedulerController::class, 'sendNotificationsToAll']);
+
 Route::get('/send-notifications/all/{title}/{message}', [NotificationSchedulerController::class, 'sendNotificationsToAllUsers']);
 Route::get('/send-notifications/testing', [NotificationSchedulerController::class, 'testing']);
 
@@ -125,16 +126,15 @@ Route::get('/berita', [BeritaController::class, 'index']);
 /*
 # crontab codes to run /send-notifications/testing every 1 minute?
 * * * * * /usr/bin/curl http://localhost:8000/api/send-notifications/testing
+* * * * * /usr/bin/curl http://localhost/api/send-notifications/testing
 
 # -------------------
 # -------------------
 
-# restart server every reboot
-@reboot cd /home/smartfinance-backend/htdocs && php artisan serve --host 0.0.0.0
 # crontab codes to run /berita/scrap every 1 hour?
-0 * * * * /usr/bin/curl http://localhost:8000/api/berita/scrap
+0 * * * * /usr/bin/curl http://localhost/api/berita/scrap
 # crontab codes to run /send-notifications/all every 1 minute?
-* * * * * /usr/bin/curl http://localhost:8000/api/send-notifications/all
+* * * * * /usr/bin/curl http://localhost/api/send-notifications/all
 */
 Route::get('/berita/scrap', [BeritaController::class, 'scrap']);
 Route::post('/berita', [BeritaController::class, 'create']);
