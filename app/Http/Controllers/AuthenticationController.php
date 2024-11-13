@@ -295,11 +295,13 @@ class AuthenticationController extends Controller
         $subject = 'Silahkan verifikasi akun anda';
 
         $code =  $user->email_verification_code;
-        $base_url = url("/api/verify/$code");
-        $message = "Klik utk verifikasi: $base_url";
+        $data = [
+            'url' => url("/api/verify/$code")
+        ];
 
-        $x = Mail::raw($message, function ($message) use ($email, $subject) {
-            $message->from('dahlansudar2@gmail.com', 'Smart Finance')->to($email)
+        $x = Mail::send('emails.verify', $data, function ($message) use ($email, $subject) {
+            $message->from('dahlansudar2@gmail.com', 'Smart Finance')
+                ->to($email)
                 ->subject($subject);
         });
 
@@ -313,15 +315,40 @@ class AuthenticationController extends Controller
         // return $this->successResponse($user, 'Registration Successfully');
     }
 
+    // public function testSendEmail()
+    // {
+    //     //send plain text email to "coba@mailinator.com"?
+    //     $email = 'testing@mailinator.com';
+    //     $subject = 'Silahkan verifikasi akun anda';
+    //     $message = "Silahkan verifikasi akun anda dengan klik link berikut: ' . url('/') . '/api/verify/testing Terima kasih.";
+
+    //     $x = Mail::raw($message, function ($message) use ($email, $subject) {
+    //         $message->from('dahlansudar2@gmail.com', 'Smart Finance')->to($email)
+    //             ->subject($subject);
+    //     });
+
+    //     return response()->json([
+    //         "message" => "Email sent!",
+    //         "x" => $x,
+    //         "email" => $email,
+    //         "subject" => $subject,
+    //         "message" => $message,
+    //     ]);
+    // }
+
     public function testSendEmail()
     {
-        //send plain text email to "coba@mailinator.com"?
         $email = 'testing@mailinator.com';
         $subject = 'Silahkan verifikasi akun anda';
-        $message = "Silahkan verifikasi akun anda dengan klik link berikut: ' . url('/') . '/api/verify/testing Terima kasih.";
 
-        $x = Mail::raw($message, function ($message) use ($email, $subject) {
-            $message->from('dahlansudar2@gmail.com', 'Smart Finance')->to($email)
+        $code = "DXTRCZ";
+        $data = [
+            'url' => url("/api/verify/$code")
+        ];
+
+        $x = Mail::send('emails.verify', $data, function ($message) use ($email, $subject) {
+            $message->from('dahlansudar2@gmail.com', 'Smart Finance')
+                ->to($email)
                 ->subject($subject);
         });
 
@@ -330,9 +357,9 @@ class AuthenticationController extends Controller
             "x" => $x,
             "email" => $email,
             "subject" => $subject,
-            "message" => $message,
         ]);
     }
+
 
     public function verify($code)
     {
